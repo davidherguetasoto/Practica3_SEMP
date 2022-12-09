@@ -1,3 +1,5 @@
+# https://github.com/github/gitignore/blob/master/C.gitignore
+
 # Prerequisites
 *.d
 
@@ -41,6 +43,9 @@
 *.su
 *.idb
 *.pdb
+Debug/
+.settings/
+*.launch
 
 # Kernel Module Compile Results
 *.mod*
@@ -50,3 +55,16 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# cscope with Vim
+cscope.*
+
+#ctags with Vim
+tags
+types_c.taghl
+
+#CtrlP
+ctrlp.root
+
+#html
+*.html
