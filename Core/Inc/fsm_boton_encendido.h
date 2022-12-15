@@ -8,8 +8,7 @@
 #define FSM_BOTON_ENCENDIDO_H
 
 #include "fsm.h"
-#include "stm32f4xx_hal_tim.h"
-#include "stm32f4xx_hal.h"
+#include "stm32f4xx.h"
 
 typedef struct{
 	fsm_t* f;
@@ -47,10 +46,10 @@ enum start_state {
 
 //EVOLUCIÓN FSM
 static fsm_trans_t inicio[] = {
-  { OFF, boton_presionado, BOTON_PULSADO, inicio_activado},
-  { BOTON_PULSADO, desbloqueo_on, ON, inicio_actualizacion},
-  { ON, boton_presionado, BOTON_PULSADO,  inicio_desactivado },
-  { BOTON_PULSADO, desbloqueo_off, OFF, inicio_actualizacion },
+  { OFF, (fsm_t*)boton_presionado, BOTON_PULSADO, (fsm_t*)inicio_activado},
+  { BOTON_PULSADO, (fsm_t*)desbloqueo_on, ON, (fsm_t*)inicio_actualizacion},
+  { ON, (fsm_t*)boton_presionado, BOTON_PULSADO,  (fsm_t*)inicio_desactivado },
+  { BOTON_PULSADO, (fsm_t*)desbloqueo_off, OFF, (fsm_t*)inicio_actualizacion },
   {-1, NULL, -1, NULL },
   };
 
