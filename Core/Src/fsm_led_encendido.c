@@ -8,7 +8,7 @@
 #include "fsm_led_encendido.h"
 #include <stdlib.h>
 
-fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, GPIO_TypeDef* port, uint16_t pin, uint8_t flag_timer_led, TIM_HandleTypeDef *timer_led, uint8_t activado)
+fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, void* port, uint16_t pin, uint8_t flag_timer_led, void* timer_led, uint8_t activado)
 {
 	fsm_led_encendido_t* this = (fsm_led_encendido_t*) malloc (sizeof (fsm_led_encendido_t));
 	this->f = fsm_new(led);
@@ -16,7 +16,7 @@ fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, GPIO_TypeDef* port, 
 	return this;
 }
 
-void fsm_led_encendido_init (fsm_led_encendido_t* this, uint32_t delay, GPIO_TypeDef* puerto, uint16_t pin, uint8_t flag_timer_led, TIM_HandleTypeDef* timer_led, uint8_t activado)
+void fsm_led_encendido_init (fsm_led_encendido_t* this, uint32_t delay, void* puerto, uint16_t pin, uint8_t flag_timer_led, void* timer_led, uint8_t activado)
 {
 	//fsm_init(this->fsm_led_encendido,tt);
 	this->delay = delay;
@@ -51,20 +51,19 @@ static int activado_off (fsm_led_encendido_t* this)
 //FUNCIONES DE GUARDA
 static void led_activado (fsm_led_encendido_t* this)
 {
-  __HAL_TIM_SET_COUNTER(this->timer_led, 0); //Reinicio a cero del temporizador del LED
-  HAL_TIM_Base_Start_IT(this->timer_led); //Temporizador LED
+  start_timer(this->timer_led);
 }
 
 static void led_toggle (fsm_led_encendido_t* this)
 {
-  HAL_GPIO_TogglePin(this->puerto, this->pin);
+  toggle_pin(this->puerto, this->pin);
   this->timer_led = 0;
-  __HAL_TIM_SET_COUNTER(this->timer_led, 0); //Reinicio a cero del temporizador del LED
+  stop_timer(this->timer_led, 0);
 }
 
 static void led_desactivado (fsm_led_encendido_t* this)
 {
-  HAL_TIM_Base_Stop_IT(this->timer_led); //Temporizador LED
+  stop_timer(this->timer_led);
   this->timer_led = 0;
-  HAL_GPIO_WritePin(this->puerto, this->pin, 0);
+  write_pin(this->puerto, this->pin, 0);
 }

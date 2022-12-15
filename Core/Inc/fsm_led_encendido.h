@@ -9,20 +9,20 @@
 #define INC_FSM_LED_ENCENDIDO_H_
 
 #include "fsm.h"
-#include "stm32f4xx.h"
+#include "interfaz_hal.h"
 
 typedef struct{
 	fsm_t* f;
 	uint32_t delay; //Frecuencia de activacion de la FSM
-	GPIO_TypeDef * puerto; //Puerto del LED
+	void* puerto; //Puerto del LED
 	uint16_t pin;	     //Pin en el que se encuentre el LED
 	volatile uint8_t flag_timer_led; //Flag para el timer del LED
 	uint8_t activado; //Variable compartida para señalar que el sistema está activo
-	TIM_HandleTypeDef *timer_led; //Manejador timer del LED
+	void*timer_led; //Manejador timer del LED
 } fsm_led_encendido_t;
 
-fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, GPIO_TypeDef* port, uint16_t pin, uint8_t flag_timer_led, TIM_HandleTypeDef *timer_led, uint8_t activado); //Constructor de la FSM. Habrá que pasarle el esquema de la FSM y los argumentos de la máquina
-void fsm_led_encendido_init (fsm_led_encendido_t* this, uint32_t delay, GPIO_TypeDef* puerto, uint16_t pin, uint8_t flag_timer_led, TIM_HandleTypeDef* timer_led, uint8_t activado);
+fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, void* port, uint16_t pin, uint8_t flag_timer_led, void* timer_led, uint8_t activado); //Constructor de la FSM. Habrá que pasarle el esquema de la FSM y los argumentos de la máquina
+void fsm_led_encendido_init (fsm_led_encendido_t* this, uint32_t delay, void* puerto, uint16_t pin, uint8_t flag_timer_led, void* timer_led, uint8_t activado);
 void fsm_fire_led_encendido (fsm_led_encendido_t* this);
 
 //FUNCIONES DE TRANSICION
