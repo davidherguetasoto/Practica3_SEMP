@@ -5,6 +5,7 @@
  *      Author: andre
  */
 
+#include "interfaz_hal.h"
 
 void start_timer(TIM_HandleTypeDef *htim)
 {

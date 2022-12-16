@@ -6,9 +6,8 @@
  */
 
 #include "fsm_led_encendido.h"
-#include <stdlib.h>
 
-fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, void* port, uint16_t pin, uint8_t flag_timer_led, void* timer_led, uint8_t activado)
+fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, GPIO_TypeDef_t* port, uint16_t pin, uint8_t flag_timer_led, TIM_HandleTypeDef_t* timer_led, uint8_t activado)
 {
 	fsm_led_encendido_t* this = (fsm_led_encendido_t*) malloc (sizeof (fsm_led_encendido_t));
 	this->f = fsm_new(led);
@@ -16,7 +15,7 @@ fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, void* port, uint16_t
 	return this;
 }
 
-void fsm_led_encendido_init (fsm_led_encendido_t* this, uint32_t delay, void* puerto, uint16_t pin, uint8_t flag_timer_led, void* timer_led, uint8_t activado)
+void fsm_led_encendido_init (fsm_led_encendido_t* this, uint32_t delay, GPIO_TypeDef_t* puerto, uint16_t pin, uint8_t flag_timer_led, TIM_HandleTypeDef_t* timer_led, uint8_t activado)
 {
 	//fsm_init(this->fsm_led_encendido,tt);
 	this->delay = delay;
@@ -58,7 +57,7 @@ static void led_toggle (fsm_led_encendido_t* this)
 {
   toggle_pin(this->puerto, this->pin);
   this->timer_led = 0;
-  stop_timer(this->timer_led, 0);
+  reset_timer(this->timer_led, 0);
 }
 
 static void led_desactivado (fsm_led_encendido_t* this)
