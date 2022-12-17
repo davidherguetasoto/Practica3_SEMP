@@ -8,26 +8,49 @@
 #include "fsm_boton_encendido.h"
 #include<stdlib.h>
 
-fsm_boton_encendido_t* fsm_boton_encendido_new (uint32_t delay, GPIO_TypeDef* port, uint16_t pin, uint8_t flag_timer_boton, TIM_HandleTypeDef *timer_boton, uint8_t activado)
+
+
+//ESTADOS
+enum start_state {
+	OFF,
+	BOTON_PULSADO,
+	ON
+};
+
+//EVOLUCIÓN FSM
+static fsm_trans_t inicio[] = {
+  { OFF, (fsm_t*)boton_presionado, BOTON_PULSADO, (fsm_t*)inicio_activado},
+  { BOTON_PULSADO, (fsm_t*)desbloqueo_on, ON, (fsm_t*)inicio_actualizacion},
+  { ON, (fsm_t*)boton_presionado, BOTON_PULSADO,  (fsm_t*)inicio_desactivado },
+  { BOTON_PULSADO, (fsm_t*)desbloqueo_off, OFF, (fsm_t*)inicio_actualizacion },
+  {-1, NULL, -1, NULL },
+  };
+
+
+
+fsm_boton_encendido_t* _fsm_boton_encendido_new (uint8_t* activado, uint8_t* flag_timer_boton, void* boton, void* timer_boton,
+		boton_pulsado_p boton_pulsado, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer)
 {
 	fsm_boton_encendido_t* this = (fsm_boton_encendido_t*) malloc (sizeof (fsm_boton_encendido_t));
 	this->f = fsm_new(inicio);
-	fsm_boton_encendido_init(this, delay, port, pin, flag_timer_boton, timer_boton, activado);
+	_fsm_boton_encendido_init(this,activado,flag_timer_boton,boton, timer_boton,boton_pulsado,start_timer,stop_timer,set_timer);
 	return this;
 }
 
-void fsm_boton_encendido_init (fsm_boton_encendido_t* this, uint32_t delay, GPIO_TypeDef* puerto, uint16_t pin, uint8_t flag_timer_boton, TIM_HandleTypeDef* timer_boton, uint8_t activado)
+void _fsm_boton_encendido_init (fsm_boton_encendido_t* this,uint8_t* activado, uint8_t* flag_timer_boton, void* boton, void* timer_boton,
+		boton_pulsado_p boton_pulsado, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer)
 {
-	//fsm_init(this->fsm_boton_encendido,tt);
-	this->delay = delay;
-	this->puerto = puerto;
-	this->pin = pin;
 	this->flag_timer_boton = flag_timer_boton;
 	this ->activado = activado;
+	this ->boton = boton;
 	this ->timer_boton = timer_boton;
+	this ->boton_pulsado = boton_pulsado;
+	this -> start_timer = start_timer;
+	this -> stop_timer = stop_timer;
+	this -> set_timer = set_timer;
 }
 
-void fsm_fire_boton_encendido (fsm_boton_encendido_t* this)
+void _fsm_fire_boton_encendido (fsm_boton_encendido_t* this)
 {
 	fsm_fire(this->f);
 }
@@ -35,7 +58,7 @@ void fsm_fire_boton_encendido (fsm_boton_encendido_t* this)
 //FUNCIONES DE TRANSICION
 static int boton_presionado (fsm_boton_encendido_t* this)
 {
-	if (HAL_GPIO_ReadPin(this->puerto, this->pin) == 1)
+	if (this->boton_pulsado(this->boton))
 		return 1;
 	else
 		return 0;
@@ -43,7 +66,7 @@ static int boton_presionado (fsm_boton_encendido_t* this)
 
 static int desbloqueo_on (fsm_boton_encendido_t* this)
 {
-	if (this->flag_timer_boton && this->activado && (HAL_GPIO_ReadPin(this->puerto, this->pin) == 0))
+	if (this->flag_timer_boton && this->activado && !(this->boton_pulsado(this->boton)))
 		return 1;
 	else
 		return 0;
@@ -51,7 +74,7 @@ static int desbloqueo_on (fsm_boton_encendido_t* this)
 
 static int desbloqueo_off (fsm_boton_encendido_t* this)
 {
-	if (this->flag_timer_boton && !this->activado && (HAL_GPIO_ReadPin(this->puerto, this->pin) == 0))
+	if (this->flag_timer_boton && !(this->activado) && !(this->boton_pulsado(this->boton)))
 		return 1;
 	else
 		return 0;
@@ -60,20 +83,21 @@ static int desbloqueo_off (fsm_boton_encendido_t* this)
 //FUNCIONES GUARDA
 static void inicio_activado (fsm_boton_encendido_t* this)
 {
-	this -> activado = 1;
-	 __HAL_TIM_SET_COUNTER(this->timer_boton, 0); //Reinicio a cero del temporizador del boton
-	 HAL_TIM_Base_Start_IT(this->timer_boton); //Temporizador boton
+	*(this -> activado) = 1;
+	this -> set_timer(this -> timer_boton, 0); //Reinicio a cero del temporizador del boton
+	this -> start_timer(this -> timer_boton); //Temporizador boton start
 }
 
 static void inicio_actualizacion (fsm_boton_encendido_t* this)
 {
-	  HAL_TIM_Base_Stop_IT(this->timer_boton); //Temporizador boton stop
-	  this->flag_timer_boton = 0; //Reinicio del flag del temporizador
+	  this -> stop_timer(this -> timer_boton); //Temporizador boton stop
+	  *(this->flag_timer_boton) = 0; //Reinicio del flag del temporizador
 }
 
 static void inicio_desactivado (fsm_boton_encendido_t* this)
 {
-	  this->activado = 0;
-	  __HAL_TIM_SET_COUNTER(this->timer_boton, 0); //Reinicio a cero del temporizador del boton
-	  HAL_TIM_Base_Start_IT(this->timer_boton); //Temporizador boton
+	  *(this->activado) = 0;
+	  this -> set_timer(this -> timer_boton, 0); //Reinicio a cero del temporizador del boton
+	  this -> start_timer(this -> timer_boton); //Temporizador boton start
 }
+

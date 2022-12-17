@@ -8,21 +8,33 @@
 #define FSM_BOTON_ENCENDIDO_H
 
 #include "fsm.h"
-#include "stm32f4xx.h"
+#include <stdint.h>
+
+typedef int (*boton_pulsado_p)(void*);
+typedef void (*start_timer_p)(void*);
+typedef void (*stop_timer_p)(void*);
+typedef void (*set_timer_p)(void*,int);
 
 typedef struct{
 	fsm_t* f;
-	uint32_t delay; //Frecuencia de activacion de la FSM
-	GPIO_TypeDef * puerto; //Puerto del boton
-	uint16_t pin;	     //Pin en el que se encuentre el boton
-	volatile uint8_t flag_timer_boton; //Flag para el timer del boton
-	uint8_t activado; //Variable compartida para señalar que el sistema está activo
-	TIM_HandleTypeDef *timer_boton; //Manejador timer del botón
+	volatile uint8_t *flag_timer_boton; //Flag para el timer del boton
+	volatile uint8_t *activado; //Variable compartida para señalar que el sistema está activo
+	void *timer_boton; //Referencia del temporizador
+	void *boton; //Referencia del boton
+
+	//Metodos virtuales
+	boton_pulsado_p boton_pulsado; //Método que comprueba si la entrada (botón) está activa
+	start_timer_p start_timer; //Método para lanzar la cuenta del temporizador
+	stop_timer_p stop_timer; //Método para parar la cuenta del temporizador
+	set_timer_p set_timer; //Método para colocar un valor en la cuenta del temporizador
+
 } fsm_boton_encendido_t;
 
-fsm_boton_encendido_t* fsm_boton_encendido_new (uint32_t delay, GPIO_TypeDef* port, uint16_t pin, uint8_t flag_timer_boton, TIM_HandleTypeDef *timer_boton, uint8_t activado); //Constructor de la FSM. Habrá que pasarle el esquema de la FSM y los argumentos de la máquina
-void fsm_boton_encendido_init (fsm_boton_encendido_t* this, uint32_t delay, GPIO_TypeDef* puerto, uint16_t pin, uint8_t flag_timer_boton, TIM_HandleTypeDef* timer_boton, uint8_t activado);
-void fsm_fire_boton_encendido (fsm_boton_encendido_t* this);
+fsm_boton_encendido_t* _fsm_boton_encendido_new (uint8_t* activado, uint8_t* flag_timer_boton, void* boton, void* timer_boton,
+		boton_pulsado_p boton_pulsado, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer); //Constructor de la FSM. Habrá que pasarle el esquema de la FSM y los argumentos de la máquina
+void _fsm_boton_encendido_init (fsm_boton_encendido_t* this,uint8_t* activado, uint8_t* flag_timer_boton, void* boton, void* timer_boton,
+		boton_pulsado_p boton_pulsado, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer);
+void _fsm_fire_boton_encendido (fsm_boton_encendido_t* this);
 
 
 //FUNCIONES DE TRANSICION
@@ -34,24 +46,6 @@ static int desbloqueo_off (fsm_boton_encendido_t* this);
 static void inicio_activado (fsm_boton_encendido_t* this);
 static void inicio_actualizacion (fsm_boton_encendido_t* this);
 static void inicio_desactivado (fsm_boton_encendido_t* this);
-
-
-
-//ESTADOS
-enum start_state {
-	OFF,
-	BOTON_PULSADO,
-	ON
-};
-
-//EVOLUCIÓN FSM
-static fsm_trans_t inicio[] = {
-  { OFF, (fsm_t*)boton_presionado, BOTON_PULSADO, (fsm_t*)inicio_activado},
-  { BOTON_PULSADO, (fsm_t*)desbloqueo_on, ON, (fsm_t*)inicio_actualizacion},
-  { ON, (fsm_t*)boton_presionado, BOTON_PULSADO,  (fsm_t*)inicio_desactivado },
-  { BOTON_PULSADO, (fsm_t*)desbloqueo_off, OFF, (fsm_t*)inicio_actualizacion },
-  {-1, NULL, -1, NULL },
-  };
 
 
 #endif
