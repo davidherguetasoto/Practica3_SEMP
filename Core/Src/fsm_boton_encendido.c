@@ -66,7 +66,7 @@ static int boton_presionado (fsm_boton_encendido_t* this)
 
 static int desbloqueo_on (fsm_boton_encendido_t* this)
 {
-	if (this->flag_timer_boton && this->activado && !(this->boton_pulsado(this->boton)))
+	if (*(this->flag_timer_boton) && *(this->activado) && !(this->boton_pulsado(this->boton)))
 		return 1;
 	else
 		return 0;
@@ -74,7 +74,7 @@ static int desbloqueo_on (fsm_boton_encendido_t* this)
 
 static int desbloqueo_off (fsm_boton_encendido_t* this)
 {
-	if (this->flag_timer_boton && !(this->activado) && !(this->boton_pulsado(this->boton)))
+	if (*(this->flag_timer_boton) && !(*(this->activado)) && !(this->boton_pulsado(this->boton)))
 		return 1;
 	else
 		return 0;
