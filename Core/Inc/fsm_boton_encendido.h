@@ -37,15 +37,4 @@ void _fsm_boton_encendido_init (fsm_boton_encendido_t* this,uint8_t* activado, u
 void _fsm_fire_boton_encendido (fsm_boton_encendido_t* this);
 
 
-//FUNCIONES DE TRANSICION
-static int boton_presionado (fsm_boton_encendido_t* this);
-static int desbloqueo_on (fsm_boton_encendido_t* this);
-static int desbloqueo_off (fsm_boton_encendido_t* this);
-
-//FUNCIONES GUARDA
-static void inicio_activado (fsm_boton_encendido_t* this);
-static void inicio_actualizacion (fsm_boton_encendido_t* this);
-static void inicio_desactivado (fsm_boton_encendido_t* this);
-
-
 #endif
