@@ -19,10 +19,10 @@ enum start_state {
 
 //EVOLUCIÓN FSM
 static fsm_trans_t inicio[] = {
-  { OFF, (fsm_t*)boton_presionado, BOTON_PULSADO, (fsm_t*)inicio_activado},
-  { BOTON_PULSADO, (fsm_t*)desbloqueo_on, ON, (fsm_t*)inicio_actualizacion},
-  { ON, (fsm_t*)boton_presionado, BOTON_PULSADO,  (fsm_t*)inicio_desactivado },
-  { BOTON_PULSADO, (fsm_t*)desbloqueo_off, OFF, (fsm_t*)inicio_actualizacion },
+  { OFF, (fsm_input_func_t)boton_presionado, BOTON_PULSADO, (fsm_output_func_t)inicio_activado},
+  { BOTON_PULSADO, (fsm_input_func_t)desbloqueo_on, ON, (fsm_output_func_t)inicio_actualizacion},
+  { ON, (fsm_input_func_t)boton_presionado, BOTON_PULSADO,  (fsm_output_func_t)inicio_desactivado },
+  { BOTON_PULSADO, (fsm_input_func_t)desbloqueo_off, OFF, (fsm_output_func_t)inicio_actualizacion },
   {-1, NULL, -1, NULL },
   };
 

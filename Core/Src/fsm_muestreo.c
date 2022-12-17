@@ -19,10 +19,10 @@ enum muestreo_state {
 
 //EVOLUCION FSM
 static fsm_trans_t fsm_muestreo_tt[]={
-		{STOP, (fsm_t*)fsmActivada,MUESTREO,(fsm_t*)activarMuestreo},
-		{MUESTREO,(fsm_t*)fsmDesactivada, STOP, (fsm_t*)desactivarMuestreo},
-		{MUESTREO,(fsm_t*)llegaNuevaLectura,MUESTREO,(fsm_t*)hacerLectura},
-		{MUESTREO,(fsm_t*)finLectura,MUESTREO,(fsm_t*)mandar_a_FIFO},
+		{STOP, (fsm_input_func_t)fsmActivada,MUESTREO,(fsm_output_func_t)activarMuestreo},
+		{MUESTREO,(fsm_input_func_t)fsmDesactivada, STOP, (fsm_output_func_t)desactivarMuestreo},
+		{MUESTREO,(fsm_input_func_t)llegaNuevaLectura,MUESTREO,(fsm_output_func_t)hacerLectura},
+		{MUESTREO,(fsm_input_func_t)finLectura,MUESTREO,(fsm_output_func_t)mandar_a_FIFO},
 		{-1, NULL, -1, NULL},
 };
 
