@@ -17,6 +17,18 @@ enum start_state {
 	ON
 };
 
+
+//FUNCIONES DE TRANSICION
+static int boton_presionado (fsm_boton_encendido_t* this);
+static int desbloqueo_on (fsm_boton_encendido_t* this);
+static int desbloqueo_off (fsm_boton_encendido_t* this);
+
+//FUNCIONES GUARDA
+static void inicio_activado (fsm_boton_encendido_t* this);
+static void inicio_actualizacion (fsm_boton_encendido_t* this);
+static void inicio_desactivado (fsm_boton_encendido_t* this);
+
+
 //EVOLUCIÓN FSM
 static fsm_trans_t inicio[] = {
   { OFF, (fsm_input_func_t)boton_presionado, BOTON_PULSADO, (fsm_output_func_t)inicio_activado},

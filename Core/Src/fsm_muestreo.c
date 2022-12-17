@@ -17,6 +17,18 @@ enum muestreo_state {
 	MUESTREO
 };
 
+//FUENCIONES DE TRANSICION
+static int fsmActivada(fsm_muestreo_t* this);
+static int fsmDesactivada(fsm_muestreo_t* this);
+static int llegaNuevaLectura(fsm_muestreo_t* this);
+static int finLectura(fsm_muestreo_t* this);
+
+//FUNCIONES DE GUARDA
+static void activarMuestreo(fsm_muestreo_t* this);
+static void desactivarMuestreo(fsm_muestreo_t* this);
+static void hacerLectura(fsm_muestreo_t* this);
+static void mandar_a_FIFO(fsm_muestreo_t* this);
+
 //EVOLUCION FSM
 static fsm_trans_t fsm_muestreo_tt[]={
 		{STOP, (fsm_input_func_t)fsmActivada,MUESTREO,(fsm_output_func_t)activarMuestreo},
