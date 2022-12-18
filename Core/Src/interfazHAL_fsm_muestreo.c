@@ -10,11 +10,19 @@
 #include "stm32f4_discovery_accelerometer.h"
 #include <stdlib.h>
 
+#define EXTREME 90
+#define HIGH 60
+#define NORMAL 30
+
 typedef struct{
 	GPIO_TypeDef* GPIOx;
 	uint16_t GPIO_Pin;
 }boton_t;
 
+typedef struct{
+	TIM_HandleTypeDef* timer_pwm_salida;
+	uint32_t channel;
+}salida_t;
 
 void startTimer(void* timer)
 {
@@ -42,6 +50,30 @@ void lecturaSensor(int16_t* buffer)
 	BSP_ACCELERO_GetXYZ(buffer);
 }
 
+void pwmSalidaNormal(void* salida)
+{
+	salida_t *s = (salida_t*)salida;
+	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, NORMAL);
+}
+
+void pwmSalidaHigh(void* salida)
+{
+	salida_t *s = (salida_t*)salida;
+	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, HIGH);
+}
+
+void pwmSalidaExtreme(void* salida)
+{
+	salida_t *s = (salida_t*)salida;
+	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, EXTREME);
+}
+
+void pwmSalidaOff(void* salida)
+{
+	salida_t *s = (salida_t*)salida;
+	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, 0);
+}
+
 fsm_muestreo_t* fsm_muestreo_new(uint8_t* activado, uint8_t* flag_timer_muestreo,
 		TIM_HandleTypeDef* timer, uint8_t FIFO_full, pushFIFO_p pushFIFO)
 {
@@ -66,4 +98,17 @@ fsm_boton_encendido_t* fsm_boton_encendido_new (uint8_t* activado, uint8_t* flag
 void fsm_boton_encendido_fire(fsm_boton_encendido_t* this)
 {
 	_fsm_fire_boton_encendido(this);
+}
+
+fsm_procesamiento_t* fsm_procesamiento_new(uint8_t* activado, TIM_HandleTypeDef* tim_pwm_salida, uint32_t canal_tim_pwm, uint8_t FIFO_empty,  pullFIFO_p pull_FIFO)
+{
+	salida_t *s = (salida_t*)malloc(sizeof(salida_t));
+	s ->timer_pwm_salida = tim_pwm_salida;
+	s ->channel = canal_tim_pwm;
+	return _fsm_procesamiento_new(activado,FIFO_empty,(void*)s,pwmSalidaNormal,pwmSalidaHigh,pwmSalidaExtreme,pull_FIFO,pwmSalidaOff);
+}
+
+void fsm_procesamiento_fire(fsm_procesamiento_t* this)
+{
+	_fsm_procesamiento_fire(this);
 }
