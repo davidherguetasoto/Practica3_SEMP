@@ -9,45 +9,35 @@
 #define INC_FSM_LED_ENCENDIDO_H_
 
 #include "fsm.h"
-#include "interfaz_hal.h"
-#include <stdlib.h>
+#include <stdint.h>
+
+typedef void (*start_timer_p)(void*);
+typedef void (*stop_timer_p)(void*);
+typedef void (*set_timer_p)(void*, int);
+typedef void (*toggle_pin_p)(void*);
+typedef void (*write_pin_p)(void*, int);
 
 typedef struct{
 	fsm_t* f;
-	uint32_t delay; //Frecuencia de activacion de la FSM
-	GPIO_TypeDef_t* puerto; //Puerto del LED
-	uint16_t pin;	     //Pin en el que se encuentre el LED
-	volatile uint8_t flag_timer_led; //Flag para el timer del LED
-	uint8_t activado; //Variable compartida para señalar que el sistema está activo
+	void* puerto; //Puerto del LED
+	volatile uint8_t* flag_timer_led; //Flag para el timer del LED
+	volatile uint8_t* activado; //Variable compartida para señalar que el sistema está activo
 	void* timer_led; //Manejador timer del LED
+	void* pin;	     //Pin en el que se encuentre el LED
+
+	//Metodos virtuales
+	start_timer_p start_timer; //Método para lanzar la cuenta del temporizador
+	stop_timer_p stop_timer; //Método para parar la cuenta del temporizador
+	set_timer_p set_timer; //Método para colocar un valor en la cuenta del temporizador
+	toggle_pin_p toggle_pin; //Método para hacer toggle de un pin
+	write_pin_p write_pin; //Método para escribir en un pin
+
 } fsm_led_encendido_t;
 
-fsm_led_encendido_t* fsm_led_encendido_new (uint32_t delay, GPIO_TypeDef_t* port, uint16_t pin, uint8_t flag_timer_led, TIM_HandleTypeDef_t* timer_led, uint8_t activado); //Constructor de la FSM. Habrá que pasarle el esquema de la FSM y los argumentos de la máquina
-void fsm_led_encendido_init (fsm_led_encendido_t* this, uint32_t delay, GPIO_TypeDef_t* puerto, uint16_t pin, uint8_t flag_timer_led, TIM_HandleTypeDef_t* timer_led, uint8_t activado);
-void fsm_fire_led_encendido (fsm_led_encendido_t* this);
-
-//FUNCIONES DE TRANSICION
-static int activado_on (fsm_led_encendido_t* this);
-static int led_actualizacion (fsm_led_encendido_t* this);
-static int activado_off (fsm_led_encendido_t* this);
-
-//FUNCIONES DE GUARDA
-static void led_activado (fsm_led_encendido_t* this);
-static void led_toggle (fsm_led_encendido_t* this);
-static void led_desactivado (fsm_led_encendido_t* this);
-
-//ESTADOS
-enum led_state {
-	LED_OFF,
-	LED_ON
-};
-
-//EVOLUCIÓN FSM
-static fsm_trans_t led[] = {
-  { LED_OFF, (fsm_t*)activado_on, LED_ON, (fsm_t*)led_activado},
-  { LED_ON, (fsm_t*)led_actualizacion, LED_ON, (fsm_t*)led_toggle},
-  { LED_ON, (fsm_t*)activado_off, LED_OFF, (fsm_t*)led_desactivado},
-  {-1, NULL , -1, NULL },
-  };
+fsm_led_encendido_t* _fsm_led_encendido_new (uint8_t* activado, uint8_t* flag_timer_led, void* pin, void* timer_led,
+		start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, toggle_pin_p toggle_pin, write_pin_p write_pin); //Constructor de la FSM. Habrá que pasarle el esquema de la FSM y los argumentos de la máquina
+void _fsm_led_encendido_init (fsm_led_encendido_t* this, uint8_t* activado, uint8_t* flag_timer_led, void* pin, void* timer_led,
+		start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, toggle_pin_p toggle_pin, write_pin_p write_pin);
+void _fsm_fire_led_encendido (fsm_led_encendido_t* this);
 
 #endif /* INC_FSM_LED_ENCENDIDO_H_ */

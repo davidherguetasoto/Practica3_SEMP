@@ -74,6 +74,18 @@ void pwmSalidaOff(void* salida)
 	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, 0);
 }
 
+void togglePin(void* pin)
+{
+	boton_t *b = (boton_t*)pin;
+	HAL_GPIO_TogglePin(b->GPIOx, b->GPIO_Pin);
+}
+
+void writePin(void* pin, int valor)
+{
+	boton_t *b = (boton_t*)pin;
+	HAL_GPIO_WritePin(b->GPIOx, b->GPIO_Pin, valor);
+}
+
 fsm_muestreo_t* fsm_muestreo_new(uint8_t* activado, uint8_t* flag_timer_muestreo,
 		TIM_HandleTypeDef* timer, uint8_t FIFO_full, pushFIFO_p pushFIFO)
 {
@@ -111,4 +123,18 @@ fsm_procesamiento_t* fsm_procesamiento_new(uint8_t* activado, TIM_HandleTypeDef*
 void fsm_procesamiento_fire(fsm_procesamiento_t* this)
 {
 	_fsm_procesamiento_fire(this);
+}
+
+fsm_led_encendido_t* fsm_led_encendido_new (uint8_t* activado, uint8_t* flag_timer_led, GPIO_TypeDef* GPIOx_led, uint16_t GPIO_Pin_led, TIM_HandleTypeDef* timer_led)
+{
+	boton_t *b = (boton_t*)malloc(sizeof(boton_t));
+	b->GPIO_Pin = GPIO_Pin_led;
+	b->GPIOx = GPIOx_led;
+
+	return _fsm_led_encendido_new(activado, flag_timer_led,(void*)b, (void*)timer_led, startTimer, stopTimer, setTimer, togglePin, writePin);
+}
+
+void fsm_led_encendido_fire(fsm_led_encendido_t* this)
+{
+	_fsm_fire_led_encendido(this);
 }

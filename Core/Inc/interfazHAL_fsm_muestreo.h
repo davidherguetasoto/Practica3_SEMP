@@ -11,6 +11,7 @@
 #include "fsm_muestreo.h"
 #include "fsm_boton_encendido.h"
 #include "fsm_procesamiento.h"
+#include "fsm_led_encendido.h"
 #include "stm32f4xx.h"
 
 fsm_muestreo_t* fsm_muestreo_new(uint8_t* activado, uint8_t* flag_timer_muestreo,
@@ -23,5 +24,9 @@ void fsm_boton_encendido_fire(fsm_boton_encendido_t* this);
 
 fsm_procesamiento_t* fsm_procesamiento_new(uint8_t* activado, TIM_HandleTypeDef* tim_pwm_salida, uint32_t canal_tim_pwm, uint8_t FIFO_empty,  pullFIFO_p pull_FIFO);
 void fsm_procesamiento_fire(fsm_procesamiento_t* this);
+
+fsm_led_encendido_t* fsm_led_encendido_new (uint8_t* activado, uint8_t* flag_timer_led,
+		GPIO_TypeDef* GPIOx_led, uint16_t GPIO_Pin_led, TIM_HandleTypeDef* timer_led);
+void fsm_led_encendido_fire(fsm_led_encendido_t* this);
 
 #endif /* INC_INTERFAZHAL_FSM_MUESTREO_H_ */
