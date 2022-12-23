@@ -1,12 +1,12 @@
 /*
- * interfazHAL_fsm_muestreo.h
+ * interfazHAL.h
  *
  *  Created on: 16 dic. 2022
  *      Author: David
  */
 
-#ifndef INC_INTERFAZHAL_FSM_MUESTREO_H_
-#define INC_INTERFAZHAL_FSM_MUESTREO_H_
+#ifndef INC_INTERFAZHAL_H_
+#define INC_INTERFAZHAL_H_
 
 #include "fsm_muestreo.h"
 #include "fsm_boton_encendido.h"
@@ -29,4 +29,4 @@ fsm_led_encendido_t* fsm_led_encendido_new (uint8_t* activado, uint8_t* flag_tim
 		GPIO_TypeDef* GPIOx_led, uint16_t GPIO_Pin_led, TIM_HandleTypeDef* timer_led);
 void fsm_led_encendido_fire(fsm_led_encendido_t* this);
 
-#endif /* INC_INTERFAZHAL_FSM_MUESTREO_H_ */
+#endif /* INC_INTERFAZHAL_H_ */

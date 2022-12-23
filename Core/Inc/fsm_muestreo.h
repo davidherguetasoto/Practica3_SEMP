@@ -17,7 +17,7 @@
 typedef void (*start_timer_p)(void*);
 typedef void (*stop_timer_p)(void*);
 typedef void (*set_timer_p)(void*, int);
-typedef void (*pushFIFO_p)(int16_t*);
+typedef void (*pushFIFO_p)(int16_t**);
 typedef void (*lectura_sensor_p)(int16_t*);
 
 typedef struct {

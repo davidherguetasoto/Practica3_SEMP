@@ -6,7 +6,6 @@
  */
 
 #include "fsm_procesamiento.h"
-#include<math.h>
 #include<stdlib.h>
 
 #define N_muestra_pS 20
@@ -15,7 +14,7 @@
 
 //VARIABLES PRIVADAS
 uint8_t muestra_p=0;  //Contador de las muestra_ps tomadas
-int16_t *buffer_lectura_p; //buffer para almacenar los datos leidos
+int16_t **buffer_lectura_p; //buffer para almacenar los datos leidos
 float *buffer_modulo; //buffer en el que se almaena el módulo de los datos recogidos
 float max=0, min=0; //Máximo y mínimo de los módulos
 
@@ -70,17 +69,17 @@ static fsm_trans_t fsm_procesamiento_tt[]={
 
 fsm_procesamiento_t* _fsm_procesamiento_new(uint8_t* activado, uint8_t FIFO_empty, void* salida,
 		salida_normal_p salida_normal, salida_high_p salida_high, salida_extreme_p salida_extreme,
-		pullFIFO_p pull_FIFO, salida_off_p salida_off)
+		pullFIFO_p pull_FIFO, salida_off_p salida_off, modulo_p modulo)
 {
 	fsm_procesamiento_t* this = (fsm_procesamiento_t*)malloc(sizeof(fsm_procesamiento_t));
 	this -> f = fsm_new(fsm_procesamiento_tt);
-	_fsm_procesamiento_init(this,activado,FIFO_empty,salida,salida_normal,salida_high,salida_extreme,pull_FIFO,salida_off);
+	_fsm_procesamiento_init(this,activado,FIFO_empty,salida,salida_normal,salida_high,salida_extreme,pull_FIFO,salida_off,modulo);
 	return this;
 }
 
 void _fsm_procesamiento_init(fsm_procesamiento_t * this, uint8_t* activado, uint8_t FIFO_empty, void* salida,
 		salida_normal_p salida_normal, salida_high_p salida_high, salida_extreme_p salida_extreme,
-		pullFIFO_p pull_FIFO, salida_off_p salida_off)
+		pullFIFO_p pull_FIFO, salida_off_p salida_off, modulo_p modulo)
 {
 	this -> activado = activado;
 	this -> FIFO_empty = FIFO_empty;
@@ -89,16 +88,12 @@ void _fsm_procesamiento_init(fsm_procesamiento_t * this, uint8_t* activado, uint
 	this -> salida_high = salida_high;
 	this -> salida_extreme = salida_extreme;
 	this -> salida_off = salida_off;
+	this -> modulo = modulo;
 }
 
 void _fsm_procesamiento_fire(fsm_procesamiento_t* this)
 {
 	fsm_fire(this->f);
-}
-
-float modulo(float** buffer)
-{
-	return sqrt(buffer[muestra_p][0]*buffer[muestra_p][0]+buffer[muestra_p][1]*buffer[muestra_p][1]+buffer[muestra_p][2]*buffer[muestra_p][2]);
 }
 
 //FUNCIONES DE TRANSICIÓN
@@ -192,7 +187,7 @@ void preparacionCalculo(fsm_procesamiento_t* this)
 
 void calculoModulo(fsm_procesamiento_t* this)
 {
-	buffer_modulo[muestra_p]=modulo((float**)buffer_lectura_p);
+	buffer_modulo[muestra_p]=this->modulo(buffer_lectura_p[muestra_p]);
 	muestra_p = muestra_p + 1;
 }
 

@@ -1,13 +1,14 @@
 /*
- * interfazHAL_fsm_muestreo.c
+ * interfazHAL.c
  *
  *  Created on: 17 dic. 2022
  *      Author: David
  */
 
 
-#include "interfazHAL_fsm_muestreo.h"
+#include "interfazHAL.h"
 #include "stm32f4_discovery_accelerometer.h"
+#include "arm_math.h"
 #include <stdlib.h>
 
 #define EXTREME 90
@@ -17,7 +18,7 @@
 typedef struct{
 	GPIO_TypeDef* GPIOx;
 	uint16_t GPIO_Pin;
-}boton_t;
+}pin_t;
 
 typedef struct{
 	TIM_HandleTypeDef* timer_pwm_salida;
@@ -41,7 +42,7 @@ void setTimer(void* timer, int counter)
 
 int botonPulsado(void* boton)
 {
-	boton_t *bi = (boton_t*)boton;
+	pin_t *bi = (pin_t*)boton;
 	return(HAL_GPIO_ReadPin(bi->GPIOx, bi->GPIO_Pin));
 }
 
@@ -76,13 +77,13 @@ void pwmSalidaOff(void* salida)
 
 void togglePin(void* pin)
 {
-	boton_t *b = (boton_t*)pin;
+	pin_t *b = (pin_t*)pin;
 	HAL_GPIO_TogglePin(b->GPIOx, b->GPIO_Pin);
 }
 
 void writePin(void* pin, int valor)
 {
-	boton_t *b = (boton_t*)pin;
+	pin_t *b = (pin_t*)pin;
 	HAL_GPIO_WritePin(b->GPIOx, b->GPIO_Pin, valor);
 }
 
@@ -98,9 +99,13 @@ void fsm_muestreo_fire(fsm_muestreo_t* this)
 	_fsm_muestreo_fire(this);
 }
 
+float armModulo(int16_t* buffer)
+{
+	return sqrt(buffer[0]*buffer[0]+buffer[1]*buffer[1]+buffer[2]*buffer[2]);
+}
 fsm_boton_encendido_t* fsm_boton_encendido_new (uint8_t* activado, uint8_t* flag_timer_boton, GPIO_TypeDef* GPIOx_boton, uint16_t GPIO_Pin_boton, TIM_HandleTypeDef* timer_boton)
 {
-	boton_t *b = (boton_t*)malloc(sizeof(boton_t));
+	pin_t *b = (pin_t*)malloc(sizeof(pin_t));
 	b->GPIO_Pin = GPIO_Pin_boton;
 	b->GPIOx = GPIOx_boton;
 
@@ -117,7 +122,7 @@ fsm_procesamiento_t* fsm_procesamiento_new(uint8_t* activado, TIM_HandleTypeDef*
 	salida_t *s = (salida_t*)malloc(sizeof(salida_t));
 	s ->timer_pwm_salida = tim_pwm_salida;
 	s ->channel = canal_tim_pwm;
-	return _fsm_procesamiento_new(activado,FIFO_empty,(void*)s,pwmSalidaNormal,pwmSalidaHigh,pwmSalidaExtreme,pull_FIFO,pwmSalidaOff);
+	return _fsm_procesamiento_new(activado,FIFO_empty,(void*)s,pwmSalidaNormal,pwmSalidaHigh,pwmSalidaExtreme,pull_FIFO,pwmSalidaOff, armModulo);
 }
 
 void fsm_procesamiento_fire(fsm_procesamiento_t* this)
@@ -127,7 +132,7 @@ void fsm_procesamiento_fire(fsm_procesamiento_t* this)
 
 fsm_led_encendido_t* fsm_led_encendido_new (uint8_t* activado, uint8_t* flag_timer_led, GPIO_TypeDef* GPIOx_led, uint16_t GPIO_Pin_led, TIM_HandleTypeDef* timer_led)
 {
-	boton_t *b = (boton_t*)malloc(sizeof(boton_t));
+	pin_t *b = (pin_t*)malloc(sizeof(pin_t));
 	b->GPIO_Pin = GPIO_Pin_led;
 	b->GPIOx = GPIOx_led;
 
