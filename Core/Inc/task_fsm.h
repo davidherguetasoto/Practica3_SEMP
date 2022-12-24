@@ -42,7 +42,7 @@ typedef struct{
 
 typedef struct{
 	osThreadAttr_t task_attributes;
-	fsm_boton_encendido_t *f;
+	fsm_led_encendido_t *f;
 	uint32_t delay;
 	GPIO_TypeDef * GPIOx_led;
 	uint16_t GPIO_Pin_led;

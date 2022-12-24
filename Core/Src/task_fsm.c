@@ -5,6 +5,7 @@
  *      Author: David
  */
 #include "task_fsm.h"
+#include "main.h"
 
 void pushFIFO(int16_t** buffer)
 {
@@ -42,13 +43,13 @@ void task_fsm_procesamiento(void *argument)
 	while(1)
 	{
 		osDelay(p->delay);
-		fsm_pocesamiento_fire(p->f);
+		fsm_procesamiento_fire(p->f);
 	}
 }
 
 void task_fsm_led_encendido(void *argument)
 {
-	task_fsm_boton_encendido_t* p = (task_fsm_led_encendido_t*)argument;
+	task_fsm_led_encendido_t* p = (task_fsm_led_encendido_t*)argument;
 	while(1)
 	{
 		osDelay(p->delay);

@@ -101,7 +101,9 @@ void fsm_muestreo_fire(fsm_muestreo_t* this)
 
 float armModulo(int16_t* buffer)
 {
-	return sqrt(buffer[0]*buffer[0]+buffer[1]*buffer[1]+buffer[2]*buffer[2]);
+	float mod = 0;
+	arm_sqrt_f32(buffer[0]*buffer[0]+buffer[1]*buffer[1]+buffer[2]*buffer[2], &mod);
+	return mod;
 }
 fsm_boton_encendido_t* fsm_boton_encendido_new (uint8_t* activado, uint8_t* flag_timer_boton, GPIO_TypeDef* GPIOx_boton, uint16_t GPIO_Pin_boton, TIM_HandleTypeDef* timer_boton)
 {
