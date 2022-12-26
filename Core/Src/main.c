@@ -199,6 +199,10 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  task_fsm_boton_encendido_create(&task_boton);
+  task_fsm_muestreo_create(&task_muestreo);
+  task_fsm_procesamiento_create(&task_procesamiento);
+  task_fsm_led_encendido_create(&task_led);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
