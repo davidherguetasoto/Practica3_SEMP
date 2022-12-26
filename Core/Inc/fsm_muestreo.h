@@ -24,7 +24,7 @@ typedef struct {
 	fsm_t *f;
 	volatile uint8_t *activado;
 	volatile uint8_t *flag_timer_muestreo;
-	volatile uint8_t FIFO_full;
+	volatile uint8_t *FIFO_full;
 	void *timer;
 
 	//Métodos virtuales
@@ -36,10 +36,10 @@ typedef struct {
 }fsm_muestreo_t;
 
 fsm_muestreo_t* _fsm_muestreo_new(uint8_t* activado, uint8_t* flag_timer_muestreo,
-		void* timer, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, uint8_t FIFO_full, pushFIFO_p pushFIFO,
+		void* timer, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, uint8_t* FIFO_full, pushFIFO_p pushFIFO,
 		lectura_sensor_p lectura_sensor);
 void _fsm_muestreo_init(fsm_muestreo_t* this, uint8_t* activado, uint8_t* flag_timer_muestreo,
-		void* timer, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, uint8_t FIFO_full, pushFIFO_p pushFIFO,
+		void* timer, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, uint8_t* FIFO_full, pushFIFO_p pushFIFO,
 		lectura_sensor_p lectura_sensor);
 void _fsm_muestreo_fire(fsm_muestreo_t* this);
 

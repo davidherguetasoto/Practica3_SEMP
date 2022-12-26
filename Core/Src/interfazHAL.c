@@ -88,7 +88,7 @@ void writePin(void* pin, int valor)
 }
 
 fsm_muestreo_t* fsm_muestreo_new(uint8_t* activado, uint8_t* flag_timer_muestreo,
-		TIM_HandleTypeDef* timer, uint8_t FIFO_full, pushFIFO_p pushFIFO)
+		TIM_HandleTypeDef* timer, uint8_t* FIFO_full, pushFIFO_p pushFIFO)
 {
 	return _fsm_muestreo_new(activado,flag_timer_muestreo,(void*)timer,startTimer, stopTimer,
 			setTimer,FIFO_full, pushFIFO, lecturaSensor);
@@ -119,7 +119,7 @@ void fsm_boton_encendido_fire(fsm_boton_encendido_t* this)
 	_fsm_fire_boton_encendido(this);
 }
 
-fsm_procesamiento_t* fsm_procesamiento_new(uint8_t* activado, TIM_HandleTypeDef* tim_pwm_salida, uint32_t canal_tim_pwm, uint8_t FIFO_empty,  pullFIFO_p pull_FIFO)
+fsm_procesamiento_t* fsm_procesamiento_new(uint8_t* activado, TIM_HandleTypeDef* tim_pwm_salida, uint32_t canal_tim_pwm, uint8_t* FIFO_empty,  pullFIFO_p pull_FIFO)
 {
 	salida_t *s = (salida_t*)malloc(sizeof(salida_t));
 	s ->timer_pwm_salida = tim_pwm_salida;

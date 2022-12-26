@@ -67,7 +67,7 @@ static fsm_trans_t fsm_procesamiento_tt[]={
 };
 
 
-fsm_procesamiento_t* _fsm_procesamiento_new(uint8_t* activado, uint8_t FIFO_empty, void* salida,
+fsm_procesamiento_t* _fsm_procesamiento_new(uint8_t* activado, uint8_t* FIFO_empty, void* salida,
 		salida_normal_p salida_normal, salida_high_p salida_high, salida_extreme_p salida_extreme,
 		pullFIFO_p pull_FIFO, salida_off_p salida_off, modulo_p modulo)
 {
@@ -77,7 +77,7 @@ fsm_procesamiento_t* _fsm_procesamiento_new(uint8_t* activado, uint8_t FIFO_empt
 	return this;
 }
 
-void _fsm_procesamiento_init(fsm_procesamiento_t * this, uint8_t* activado, uint8_t FIFO_empty, void* salida,
+void _fsm_procesamiento_init(fsm_procesamiento_t * this, uint8_t* activado, uint8_t* FIFO_empty, void* salida,
 		salida_normal_p salida_normal, salida_high_p salida_high, salida_extreme_p salida_extreme,
 		pullFIFO_p pull_FIFO, salida_off_p salida_off, modulo_p modulo)
 {
@@ -99,7 +99,7 @@ void _fsm_procesamiento_fire(fsm_procesamiento_t* this)
 //FUNCIONES DE TRANSICIÓN
 int llegamuestra_p(fsm_procesamiento_t* this)
 {
-	if(*(this->activado)&& !(this->FIFO_empty))
+	if(*(this->activado)&& !(*(this->FIFO_empty)))
 		return 1;
 	else
 		return 0;
