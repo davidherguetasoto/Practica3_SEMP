@@ -638,15 +638,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
-{
-	if(htim->Instance == TIM6)
-		flag_timer_led = 1;
-	if(htim->Instance == TIM7)
-		flag_timer_muestreo = 1;
-	if(htim->Instance == TIM9)
-		flag_timer_boton = 1;
-}
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -684,6 +676,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
+	if(htim->Instance == TIM6)
+		flag_timer_led = 1;
+	if(htim->Instance == TIM7)
+		flag_timer_muestreo = 1;
+	if(htim->Instance == TIM9)
+		flag_timer_boton = 1;
 
   /* USER CODE END Callback 1 */
 }
