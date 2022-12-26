@@ -13,6 +13,13 @@
 
 
 #define N_MUESTRAS 20
+#define N_EJES 3
+
+enum ejes{
+	x,
+	y,
+	z
+};
 
 typedef void (*start_timer_p)(void*);
 typedef void (*stop_timer_p)(void*);

@@ -9,7 +9,7 @@
 #include "fsm_muestreo.h"
 
 uint8_t muestra=0;  //Contador de las muestras tomadas
-int16_t *buffer_lectura; //buffer para almacenar los datos leidos
+int16_t **buffer_lectura; //buffer para almacenar los datos leidos
 
 //ESTADOS
 enum muestreo_state {
@@ -107,7 +107,10 @@ static int finLectura(fsm_muestreo_t* this)
 static void activarMuestreo(fsm_muestreo_t* this)
 {
 	muestra=0;
-	buffer_lectura = malloc(N_MUESTRAS*sizeof(int16_t*));
+	buffer_lectura = malloc(N_EJES * sizeof(int16_t*));
+	for (int i = 0; i < N_EJES; ++i) {
+	    buffer_lectura[i] = malloc(N_MUESTRAS * sizeof(int16_t));
+	}
 	this->set_timer(this->timer,0);
 	this->start_timer(this->timer);
 }
@@ -115,12 +118,20 @@ static void activarMuestreo(fsm_muestreo_t* this)
 static void desactivarMuestreo(fsm_muestreo_t* this)
 {
 	this -> stop_timer(this->timer);
+	for (int i = 0; i < N_EJES; ++i) {
+		free(buffer_lectura[i]);
+	}
 	free(buffer_lectura);
 }
 
 static void hacerLectura(fsm_muestreo_t* this)
 {
-	this -> lectura_sensor(buffer_lectura[muestra]);
+	int16_t* sensor = malloc(N_EJES*sizeof(int16_t*));
+	this -> lectura_sensor(sensor);
+	buffer_lectura[x][muestra] = sensor[x];
+	buffer_lectura[y][muestra] = sensor[y];
+	buffer_lectura[z][muestra] = sensor[z];
+	free(sensor);
 	muestra = muestra + 1;
 	this -> set_timer(this->timer,0);
 }
