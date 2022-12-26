@@ -18,12 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stm32f4_discovery_accelerometer.h"
-#include "fsm.h"
+#include "task_fsm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,7 +54,63 @@ const osThreadAttr_t defaultTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
+uint8_t activado, flag_timer_led, flag_timer_boton, flag_timer_muestreo;
 
+task_fsm_boton_encendido_t task_boton ={
+		.task_attributes ={
+				.name = "task boton",
+				.stack_size = 128*4,
+				.priority = (osPriority_t)osPriorityHigh,
+		},
+		.timer_boton = &htim9,
+		.delay = 1,
+		.f=NULL,
+		.port = GPIOA,
+		.pin = GPIO_PIN_0,
+		.activado = &activado,
+		.flag_timer_boton = &flag_timer_boton
+};
+
+task_fsm_muestreo_t task_muestreo ={
+		.task_attributes ={
+				.name = "task muestreo",
+				.stack_size = 128*4,
+				.priority = (osPriority_t)osPriorityNormal2,
+		},
+		.timer_muestreo = &htim9,
+		.delay = 1,
+		.f=NULL,
+		.activado = &activado,
+		.flag_timer_muestreo = &flag_timer_muestreo
+};
+
+task_fsm_procesamiento_t task_procesamiento ={
+		.task_attributes ={
+				.name = "task procesamiento",
+				.stack_size = 128*4,
+				.priority = (osPriority_t)osPriorityNormal3,
+		},
+		.timer_pwm_salida = &htim9,
+		.canal_timer_pwm = 0,
+		.delay = 1,
+		.f=NULL,
+		.activado = &activado,
+};
+
+task_fsm_led_encendido_t task_led ={
+		.task_attributes ={
+				.name = "task led",
+				.stack_size = 128*4,
+				.priority = (osPriority_t)osPriorityNormal1,
+		},
+		.timer_led = &htim9,
+		.delay = 1,
+		.f=NULL,
+		.GPIOx_led = GPIOA,
+		.GPIO_Pin_led = GPIO_PIN_0,
+		.activado = &activado,
+		.flag_timer_led = &flag_timer_led
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
