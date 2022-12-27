@@ -51,6 +51,13 @@ void lecturaSensor(int16_t* buffer)
 	BSP_ACCELERO_GetXYZ(buffer);
 }
 
+void initSensor()
+{
+	if(BSP_ACCELERO_Init() != HAL_OK)
+		Error_Handler();
+}
+
+
 void pwmSalidaNormal(void* salida)
 {
 	salida_t *s = (salida_t*)salida;
@@ -91,7 +98,7 @@ fsm_muestreo_t* fsm_muestreo_new(uint8_t* activado, uint8_t* flag_timer_muestreo
 		TIM_HandleTypeDef* timer, uint8_t* FIFO_full, pushFIFO_p pushFIFO)
 {
 	return _fsm_muestreo_new(activado,flag_timer_muestreo,(void*)timer,startTimer, stopTimer,
-			setTimer,FIFO_full, pushFIFO, lecturaSensor);
+			setTimer,FIFO_full, pushFIFO, lecturaSensor, initSensor);
 }
 
 void fsm_muestreo_fire(fsm_muestreo_t* this)
