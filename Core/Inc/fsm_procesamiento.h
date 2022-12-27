@@ -20,7 +20,7 @@ typedef void (*salida_off_p)(void*);
 typedef float (*modulo_p)(int16_t*); //Funcion que calcule el modulo de un vector
 
 typedef struct{
-	fsm_t *f;
+	fsm_t f;
 	volatile uint8_t *activado;
 	volatile uint8_t *FIFO_empty;
 	void* salida; //Puntero para la estructura de los parámetros de la salida

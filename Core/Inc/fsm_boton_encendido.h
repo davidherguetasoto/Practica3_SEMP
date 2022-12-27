@@ -16,7 +16,7 @@ typedef void (*stop_timer_p)(void*);
 typedef void (*set_timer_p)(void*,int);
 
 typedef struct{
-	fsm_t* f;
+	fsm_t f;
 	volatile uint8_t *flag_timer_boton; //Flag para el timer del boton
 	volatile uint8_t *activado; //Variable compartida para señalar que el sistema está activo
 	void *timer_boton; //Referencia del temporizador

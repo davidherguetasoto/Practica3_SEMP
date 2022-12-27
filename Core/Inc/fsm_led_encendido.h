@@ -18,7 +18,7 @@ typedef void (*toggle_pin_p)(void*);
 typedef void (*write_pin_p)(void*, int);
 
 typedef struct{
-	fsm_t* f;
+	fsm_t f;
 	void* puerto; //Puerto del LED
 	volatile uint8_t* flag_timer_led; //Flag para el timer del LED
 	volatile uint8_t* activado; //Variable compartida para señalar que el sistema está activo

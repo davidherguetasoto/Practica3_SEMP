@@ -44,7 +44,6 @@ fsm_muestreo_t* _fsm_muestreo_new(uint8_t* activado, uint8_t* flag_timer_muestre
 		lectura_sensor_p lectura_sensor)
 {
 	fsm_muestreo_t* this = (fsm_muestreo_t*) malloc (sizeof (fsm_muestreo_t));
-	this->f = fsm_new(fsm_muestreo_tt);
 	_fsm_muestreo_init (this, activado, flag_timer_muestreo,timer,start_timer,stop_timer,set_timer,FIFO_full,pushFIFO,lectura_sensor);
 	return this;
 }
@@ -53,6 +52,7 @@ void _fsm_muestreo_init(fsm_muestreo_t* this, uint8_t* activado, uint8_t* flag_t
 		void* timer, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, uint8_t* FIFO_full, pushFIFO_p pushFIFO,
 		lectura_sensor_p lectura_sensor)
 {
+	fsm_init((fsm_t*)this, fsm_muestreo_tt);
 	this -> activado = activado;
 	this -> flag_timer_muestreo = flag_timer_muestreo;
 	this -> FIFO_full = FIFO_full;
@@ -66,7 +66,7 @@ void _fsm_muestreo_init(fsm_muestreo_t* this, uint8_t* activado, uint8_t* flag_t
 
 void _fsm_muestreo_fire(fsm_muestreo_t* this)
 {
-	fsm_fire(this->f);
+	fsm_fire((fsm_t*)this);
 }
 
 //FUNCIONES DE TRANSICION

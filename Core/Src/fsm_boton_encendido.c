@@ -44,7 +44,6 @@ fsm_boton_encendido_t* _fsm_boton_encendido_new (uint8_t* activado, uint8_t* fla
 		boton_pulsado_p boton_pulsado, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer)
 {
 	fsm_boton_encendido_t* this = (fsm_boton_encendido_t*) malloc (sizeof (fsm_boton_encendido_t));
-	this->f = fsm_new(inicio);
 	_fsm_boton_encendido_init(this,activado,flag_timer_boton,boton, timer_boton,boton_pulsado,start_timer,stop_timer,set_timer);
 	return this;
 }
@@ -52,6 +51,7 @@ fsm_boton_encendido_t* _fsm_boton_encendido_new (uint8_t* activado, uint8_t* fla
 void _fsm_boton_encendido_init (fsm_boton_encendido_t* this,uint8_t* activado, uint8_t* flag_timer_boton, void* boton, void* timer_boton,
 		boton_pulsado_p boton_pulsado, start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer)
 {
+	fsm_init((fsm_t*)this, inicio);
 	this->flag_timer_boton = flag_timer_boton;
 	this ->activado = activado;
 	this ->boton = boton;
@@ -64,7 +64,7 @@ void _fsm_boton_encendido_init (fsm_boton_encendido_t* this,uint8_t* activado, u
 
 void _fsm_fire_boton_encendido (fsm_boton_encendido_t* this)
 {
-	fsm_fire(this->f);
+	fsm_fire((fsm_t*)this);
 }
 
 //FUNCIONES DE TRANSICION

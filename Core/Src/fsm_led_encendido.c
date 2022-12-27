@@ -36,7 +36,6 @@ fsm_led_encendido_t* _fsm_led_encendido_new (uint8_t* activado, uint8_t* flag_ti
 		start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, toggle_pin_p toggle_pin, write_pin_p write_pin)
 {
 	fsm_led_encendido_t* this = (fsm_led_encendido_t*) malloc (sizeof (fsm_led_encendido_t));
-	this->f = fsm_new(led);
 	_fsm_led_encendido_init(this, activado, flag_timer_led, pin, timer_led, start_timer, stop_timer, set_timer, toggle_pin, write_pin);
 	return this;
 }
@@ -44,6 +43,7 @@ fsm_led_encendido_t* _fsm_led_encendido_new (uint8_t* activado, uint8_t* flag_ti
 void _fsm_led_encendido_init (fsm_led_encendido_t* this, uint8_t* activado, uint8_t* flag_timer_led, void* pin, void* timer_led,
 		start_timer_p start_timer, stop_timer_p stop_timer, set_timer_p set_timer, toggle_pin_p toggle_pin, write_pin_p write_pin)
 {
+	fsm_init((fsm_t*)this, led);
 	this->flag_timer_led = flag_timer_led;
 	this->activado = activado;
 	this->pin = pin;
@@ -57,7 +57,7 @@ void _fsm_led_encendido_init (fsm_led_encendido_t* this, uint8_t* activado, uint
 
 void _fsm_fire_led_encendido (fsm_led_encendido_t* this)
 {
-	fsm_fire(this->f);
+	fsm_fire((fsm_t*)this);
 }
 
 //FUNCIONES DE TRANSICION

@@ -28,7 +28,7 @@ typedef void (*pushFIFO_p)(int16_t**);
 typedef void (*lectura_sensor_p)(int16_t*);
 
 typedef struct {
-	fsm_t *f;
+	fsm_t f;
 	volatile uint8_t *activado;
 	volatile uint8_t *flag_timer_muestreo;
 	volatile uint8_t *FIFO_full;
