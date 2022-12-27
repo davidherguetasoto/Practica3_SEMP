@@ -96,6 +96,7 @@ static int desbloqueo_off (fsm_boton_encendido_t* this)
 static void inicio_activado (fsm_boton_encendido_t* this)
 {
 	*(this -> activado) = 1;
+	*(this->flag_timer_boton)=0;
 	this -> set_timer(this -> timer_boton, 0); //Reinicio a cero del temporizador del boton
 	this -> start_timer(this -> timer_boton); //Temporizador boton start
 }
@@ -109,6 +110,7 @@ static void inicio_actualizacion (fsm_boton_encendido_t* this)
 static void inicio_desactivado (fsm_boton_encendido_t* this)
 {
 	  *(this->activado) = 0;
+	  *(this->flag_timer_boton)=0;
 	  this -> set_timer(this -> timer_boton, 0); //Reinicio a cero del temporizador del boton
 	  this -> start_timer(this -> timer_boton); //Temporizador boton start
 }

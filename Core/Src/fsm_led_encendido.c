@@ -79,6 +79,7 @@ static int activado_off (fsm_led_encendido_t* this)
 //FUNCIONES DE GUARDA
 static void led_activado (fsm_led_encendido_t* this)
 {
+	*(this->flag_timer_led)=0;
 	this->set_timer(this->timer_led, 0);
 	this->start_timer(this->timer_led);
 }
@@ -86,14 +87,14 @@ static void led_activado (fsm_led_encendido_t* this)
 static void led_toggle (fsm_led_encendido_t* this)
 {
 	this->toggle_pin(this->pin);
-	this->flag_timer_led = 0;
+	*(this->flag_timer_led) = 0;
 	this->set_timer(this->timer_led, 0);
 }
 
 static void led_desactivado (fsm_led_encendido_t* this)
 {
 	this->stop_timer(this->timer_led);
-	this->flag_timer_led = 0;
+	*(this->flag_timer_led) = 0;
 	this->write_pin(this->pin, 0);
 }
 

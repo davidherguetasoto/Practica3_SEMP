@@ -111,6 +111,7 @@ static void activarMuestreo(fsm_muestreo_t* this)
 	for (int i = 0; i < N_EJES; ++i) {
 	    buffer_lectura[i] = malloc(N_MUESTRAS * sizeof(int16_t));
 	}
+	*(this->flag_timer_muestreo)=0;
 	this->set_timer(this->timer,0);
 	this->start_timer(this->timer);
 }
@@ -118,6 +119,7 @@ static void activarMuestreo(fsm_muestreo_t* this)
 static void desactivarMuestreo(fsm_muestreo_t* this)
 {
 	this -> stop_timer(this->timer);
+	*(this->flag_timer_muestreo)=0;
 	for (int i = 0; i < N_EJES; ++i) {
 		free(buffer_lectura[i]);
 	}
@@ -133,12 +135,14 @@ static void hacerLectura(fsm_muestreo_t* this)
 	buffer_lectura[z][muestra] = sensor[z];
 	free(sensor);
 	muestra = muestra + 1;
+	*(this->flag_timer_muestreo)=0;
 	this -> set_timer(this->timer,0);
 }
 
 static void mandar_a_FIFO(fsm_muestreo_t* this)
 {
 	this -> pushFIFO(buffer_lectura);
+	*(this->flag_timer_muestreo)=0;
 	this -> set_timer(this->timer, 0);
 	muestra = 0;
 }
