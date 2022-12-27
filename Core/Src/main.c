@@ -63,7 +63,7 @@ task_fsm_boton_encendido_t task_boton ={
 		.task_attributes ={
 				.name = "task boton",
 				.stack_size = 128*4,
-				.priority = (osPriority_t)osPriorityHigh,
+				.priority = (osPriority_t)osPriorityNormal3,
 		},
 		.timer_boton = &htim9,
 		.delay = 1,
@@ -78,7 +78,7 @@ task_fsm_muestreo_t task_muestreo ={
 		.task_attributes ={
 				.name = "task muestreo",
 				.stack_size = 128*4,
-				.priority = (osPriority_t)osPriorityNormal2,
+				.priority = (osPriority_t)osPriorityNormal4,
 		},
 		.timer_muestreo = &htim7,
 		.delay = 1,
@@ -91,7 +91,7 @@ task_fsm_procesamiento_t task_procesamiento ={
 		.task_attributes ={
 				.name = "task procesamiento",
 				.stack_size = 128*4,
-				.priority = (osPriority_t)osPriorityNormal3,
+				.priority = (osPriority_t)osPriorityNormal2,
 		},
 		.timer_pwm_salida = &htim4,
 		.canal_timer_pwm = TIM_CHANNEL_2,

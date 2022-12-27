@@ -9,6 +9,7 @@
 #include "interfazHAL.h"
 #include "stm32f4_discovery_accelerometer.h"
 #include "arm_math.h"
+#include "main.h"
 #include <stdlib.h>
 
 #define EXTREME 90
@@ -28,6 +29,12 @@ typedef struct{
 void startTimer(void* timer)
 {
 	HAL_TIM_Base_Start_IT((TIM_HandleTypeDef*)timer);
+}
+
+void startTimer_PWM(void* timer)
+{
+	salida_t *s = (salida_t*)timer;
+	HAL_TIM_PWM_Start(s->timer_pwm_salida, s->channel);
 }
 
 void stopTimer(void* timer)
@@ -106,10 +113,10 @@ void fsm_muestreo_fire(fsm_muestreo_t* this)
 	_fsm_muestreo_fire(this);
 }
 
-float armModulo(int16_t* buffer)
+float armModulo(int16_t** buffer, uint8_t muestra)
 {
 	float mod = 0;
-	arm_sqrt_f32(buffer[0]*buffer[0]+buffer[1]*buffer[1]+buffer[2]*buffer[2], &mod);
+	arm_sqrt_f32(buffer[x][muestra]*buffer[x][muestra]+buffer[y][muestra]*buffer[y][muestra]+buffer[z][muestra]*buffer[z][muestra], &mod);
 	return mod;
 }
 fsm_boton_encendido_t* fsm_boton_encendido_new (uint8_t* activado, uint8_t* flag_timer_boton, GPIO_TypeDef* GPIOx_boton, uint16_t GPIO_Pin_boton, TIM_HandleTypeDef* timer_boton)
@@ -131,7 +138,7 @@ fsm_procesamiento_t* fsm_procesamiento_new(uint8_t* activado, TIM_HandleTypeDef*
 	salida_t *s = (salida_t*)malloc(sizeof(salida_t));
 	s ->timer_pwm_salida = tim_pwm_salida;
 	s ->channel = canal_tim_pwm;
-	return _fsm_procesamiento_new(activado,FIFO_empty,(void*)s,pwmSalidaNormal,pwmSalidaHigh,pwmSalidaExtreme,pull_FIFO,pwmSalidaOff, armModulo);
+	return _fsm_procesamiento_new(activado,FIFO_empty,(void*)s,pwmSalidaNormal,pwmSalidaHigh,pwmSalidaExtreme,pull_FIFO,pwmSalidaOff, armModulo, startTimer_PWM);
 }
 
 void fsm_procesamiento_fire(fsm_procesamiento_t* this)

@@ -15,27 +15,41 @@ QueueHandle_t FIFO=NULL;
 
 void pushFIFO(int16_t** buffer)
 {
-	xQueueSend(FIFO,buffer,portMAX_DELAY);
-	if(uxQueueSpacesAvailable(FIFO)==0)
+	xQueueSendToBack(FIFO,buffer,0);
+	//if(uxQueueSpacesAvailable(FIFO)==0)
+	UBaseType_t item = uxQueueMessagesWaiting(FIFO);
+	if(item == SIZE_FIFO)
 	{
-		fifo_full=1;
+		fifo_full = 1;
+	}
+	else if(item == 0)
+	{
+		fifo_empty = 1;
 	}
 	else
 	{
-		fifo_full=0;
+		fifo_full = 0;
+		fifo_empty = 0;
 	}
 }
 
+
 void pullFIFO(int16_t** buffer)
 {
-	xQueueReceive(FIFO,buffer,portMAX_DELAY);
-	if(uxQueueMessagesWaiting(FIFO)==0)
+	xQueueReceive(FIFO,buffer,0);
+	UBaseType_t item = uxQueueMessagesWaiting(FIFO);
+	if(item == SIZE_FIFO)
 	{
-		fifo_empty=1;
+		fifo_full = 1;
+	}
+	else if(item == 0)
+	{
+		fifo_empty = 1;
 	}
 	else
 	{
-		fifo_empty=0;
+		fifo_full = 0;
+		fifo_empty = 0;
 	}
 }
 
