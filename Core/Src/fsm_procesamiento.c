@@ -10,8 +10,8 @@
 
 #define N_EJES 3
 #define N_MUESTRAS 20
-#define HIGH 2400
-#define EXTREME 3000
+#define HIGH 1500
+#define EXTREME 2000
 
 //VARIABLES PRIVADAS
 uint8_t muestra_p=0;  //Contador de las muestra_ps tomadas
