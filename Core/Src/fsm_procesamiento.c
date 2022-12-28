@@ -21,6 +21,7 @@ float max=0, min=0; //Máximo y mínimo de los módulos
 
 //ESTADOS
 enum procesamiento_state{
+	STOP,
 	ESPERA,
 	CALCULAR_MODULO,
 	MAX_MIN
@@ -29,6 +30,7 @@ enum procesamiento_state{
 //FUNCIONES DE TRANSICIÓN
 int llegamuestra_p(fsm_procesamiento_t* this);
 int fsmDesactivada(fsm_procesamiento_t* this);
+int fsmActivada(fsm_procesamiento_t* this);
 int aCalcularModulo(fsm_procesamiento_t* this);
 int finModulo(fsm_procesamiento_t* this);
 int fsmDesactivada(fsm_procesamiento_t* this);
@@ -40,6 +42,7 @@ int aMin(fsm_procesamiento_t* this);
 int aSiguiente(fsm_procesamiento_t* this);
 
 //FUNCIONES GUARDA
+void preparacionProcesamiento(fsm_procesamiento_t* this);
 void preparacionCalculo(fsm_procesamiento_t* this);
 void calculoModulo(fsm_procesamiento_t* this);
 void preparacionMaxMin(fsm_procesamiento_t* this);
@@ -53,11 +56,13 @@ void siguientemuestra_p(fsm_procesamiento_t* this);
 
 //EVOLUCIÓN FSM
 static fsm_trans_t fsm_procesamiento_tt[]={
+		{STOP,(fsm_input_func_t)fsmActivada,ESPERA,(fsm_output_func_t)preparacionProcesamiento},
+		{ESPERA,(fsm_input_func_t)fsmDesactivada,STOP,(fsm_output_func_t)salidaOFF},
 		{ESPERA,(fsm_input_func_t)llegamuestra_p,CALCULAR_MODULO,(fsm_output_func_t)preparacionCalculo},
-		{CALCULAR_MODULO,(fsm_input_func_t)fsmDesactivada,ESPERA,(fsm_output_func_t)salidaOFF},
+		{CALCULAR_MODULO,(fsm_input_func_t)fsmDesactivada,STOP,(fsm_output_func_t)salidaOFF},
 		{CALCULAR_MODULO,(fsm_input_func_t)aCalcularModulo,CALCULAR_MODULO,(fsm_output_func_t)calculoModulo},
 		{CALCULAR_MODULO,(fsm_input_func_t)finModulo,MAX_MIN,(fsm_output_func_t)preparacionMaxMin},
-		{MAX_MIN,(fsm_input_func_t)fsmDesactivada,ESPERA,(fsm_output_func_t)salidaOFF},
+		{MAX_MIN,(fsm_input_func_t)fsmDesactivada,STOP,(fsm_output_func_t)salidaOFF},
 		{MAX_MIN,(fsm_input_func_t)aSalidaNormal,ESPERA,(fsm_output_func_t)salidaNormal},
 		{MAX_MIN,(fsm_input_func_t)aSalidaHigh,ESPERA,(fsm_output_func_t)salidaHigh},
 		{MAX_MIN,(fsm_input_func_t)aSalidaExtreme,ESPERA,(fsm_output_func_t)salidaExtreme},
@@ -112,6 +117,14 @@ int llegamuestra_p(fsm_procesamiento_t* this)
 int fsmDesactivada(fsm_procesamiento_t* this)
 {
 	if(!(*(this->activado)))
+		return 1;
+	else
+		return 0;
+}
+
+int fsmActivada(fsm_procesamiento_t* this)
+{
+	if(*(this->activado))
 		return 1;
 	else
 		return 0;
@@ -182,13 +195,17 @@ int aSiguiente(fsm_procesamiento_t* this)
 }
 
 //FUNCIONES GUARDA
-void preparacionCalculo(fsm_procesamiento_t* this)
+void preparacionProcesamiento(fsm_procesamiento_t* this)
 {
 	buffer_modulo = (float*)malloc(N_MUESTRAS*sizeof(float));
 	buffer_lectura_p = malloc(N_EJES * sizeof(int16_t*));
 	for (int i = 0; i < N_EJES; ++i) {
-	    buffer_lectura_p[i] = malloc(N_MUESTRAS * sizeof(int16_t));
+		buffer_lectura_p[i] = malloc(N_MUESTRAS * sizeof(int16_t));
 	}
+}
+
+void preparacionCalculo(fsm_procesamiento_t* this)
+{
 	for (int i = 0; i < N_EJES; i++) {
 		for(int j = 0; j < N_MUESTRAS; j++){
 			this->pull_FIFO(&buffer_lectura_p[i][j]);
@@ -213,10 +230,10 @@ void preparacionMaxMin(fsm_procesamiento_t* this)
 void salidaOFF(fsm_procesamiento_t* this)
 {
 	this -> salida_off(this->salida);
-	/*for (int i = 0; i < N_EJES; ++i) {
+	for (int i = 0; i < N_EJES; ++i) {
 		free(buffer_lectura_p[i]);
 	}
-	free(buffer_lectura_p);*/
+	free(buffer_lectura_p);
 	free(buffer_modulo);
 }
 
