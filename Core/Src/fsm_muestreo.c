@@ -143,7 +143,11 @@ static void hacerLectura(fsm_muestreo_t* this)
 
 static void mandar_a_FIFO(fsm_muestreo_t* this)
 {
-	this -> pushFIFO(buffer_lectura);
+	for (int i = 0; i < N_EJES; i++) {
+		for (int j = 0; j < N_MUESTRAS; j++){
+			this -> pushFIFO(&buffer_lectura[i][j]);
+		}
+	}
 	*(this->flag_timer_muestreo)=0;
 	this -> set_timer(this->timer, 0);
 	muestra = 0;

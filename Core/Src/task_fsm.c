@@ -9,13 +9,13 @@
 #include "queue.h"
 
 
-#define SIZE_FIFO 20
+#define SIZE_FIFO 80
 uint8_t fifo_full=0, fifo_empty=1;
 QueueHandle_t FIFO=NULL;
 
-void pushFIFO(int16_t** buffer)
+void pushFIFO(int16_t* buffer)
 {
-	xQueueSendToBack(FIFO,buffer,0);
+	xQueueSendToBack(FIFO, buffer, 0);
 	//if(uxQueueSpacesAvailable(FIFO)==0)
 	UBaseType_t item = uxQueueMessagesWaiting(FIFO);
 	if(item == SIZE_FIFO)
@@ -34,9 +34,9 @@ void pushFIFO(int16_t** buffer)
 }
 
 
-void pullFIFO(int16_t** buffer)
+void pullFIFO(int16_t* buffer)
 {
-	xQueueReceive(FIFO,buffer,0);
+	xQueueReceive(FIFO, buffer, 0);
 	UBaseType_t item = uxQueueMessagesWaiting(FIFO);
 	if(item == SIZE_FIFO)
 	{
@@ -108,7 +108,7 @@ void task_fsm_muestreo_create(void *argument)
 	/*SI LA FIFO NO ESTÁ CREADA, CREARLA*/
 	if(FIFO==NULL)
 	{
-		FIFO=xQueueCreate(SIZE_FIFO,sizeof(int16_t**));
+		FIFO=xQueueCreate(SIZE_FIFO,sizeof(int16_t));
 	}
 	p->f = fsm_muestreo_new(p->activado,p->flag_timer_muestreo,p->timer_muestreo,&fifo_full,pushFIFO);
 	if (osThreadNew(task_fsm_muestreo, p, (osThreadAttr_t*)p) == NULL) {
@@ -122,7 +122,7 @@ void task_fsm_procesamiento_create(void *argument)
 	/*SI LA FIFO NO ESTÁ CREADA, CREARLA*/
 	if(FIFO==NULL)
 	{
-		FIFO=xQueueCreate(SIZE_FIFO,sizeof(int16_t**));
+		FIFO=xQueueCreate(SIZE_FIFO,sizeof(int16_t));
 	}
 	p->f = fsm_procesamiento_new(p->activado,p->timer_pwm_salida,p->canal_timer_pwm,&fifo_empty,pullFIFO);
 	if (osThreadNew(task_fsm_procesamiento, p, (osThreadAttr_t*)p) == NULL) {

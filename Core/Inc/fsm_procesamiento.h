@@ -12,7 +12,7 @@
 #include <stdint.h>
 
 
-typedef void (*pullFIFO_p) (int16_t**);
+typedef void (*pullFIFO_p) (int16_t*);
 typedef void (*salida_normal_p)(void*);
 typedef void (*salida_high_p)(void*);
 typedef void (*salida_extreme_p)(void*);

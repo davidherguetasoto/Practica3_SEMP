@@ -189,7 +189,11 @@ void preparacionCalculo(fsm_procesamiento_t* this)
 	for (int i = 0; i < N_EJES; ++i) {
 	    buffer_lectura_p[i] = malloc(N_MUESTRAS * sizeof(int16_t));
 	}
-	this->pull_FIFO(buffer_lectura_p);
+	for (int i = 0; i < N_EJES; i++) {
+		for(int j = 0; j < N_MUESTRAS; j++){
+			this->pull_FIFO(&buffer_lectura_p[i][j]);
+		}
+	}
 	muestra_p = 0;
 }
 
@@ -201,10 +205,6 @@ void calculoModulo(fsm_procesamiento_t* this)
 
 void preparacionMaxMin(fsm_procesamiento_t* this)
 {
-	for (int i = 0; i < N_EJES; ++i) {
-		free(buffer_lectura_p[i]);
-	}
-	free(buffer_lectura_p);
 	muestra_p = 0;
 	min = buffer_modulo[0];
 	max = buffer_modulo[0];
@@ -213,24 +213,25 @@ void preparacionMaxMin(fsm_procesamiento_t* this)
 void salidaOFF(fsm_procesamiento_t* this)
 {
 	this -> salida_off(this->salida);
+	/*for (int i = 0; i < N_EJES; ++i) {
+		free(buffer_lectura_p[i]);
+	}
+	free(buffer_lectura_p);*/
 	free(buffer_modulo);
 }
 
 void salidaNormal(fsm_procesamiento_t* this)
 {
 	this -> salida_normal(this->salida);
-	free(buffer_modulo);
 }
 void salidaHigh(fsm_procesamiento_t* this)
 {
 	this -> salida_high(this->salida);
-	free(buffer_modulo);
 }
 
 void salidaExtreme(fsm_procesamiento_t* this)
 {
 	this -> salida_extreme(this->salida);
-	free(buffer_modulo);
 }
 
 void nuevoMax(fsm_procesamiento_t* this)
