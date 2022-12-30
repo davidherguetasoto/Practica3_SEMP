@@ -6,9 +6,8 @@
  */
 
 #include "fsm_boton_encendido.h"
+#include "stm32f4xx.h"
 #include<stdlib.h>
-
-
 
 //ESTADOS
 enum start_state {
@@ -16,7 +15,6 @@ enum start_state {
 	BOTON_PULSADO,
 	ON
 };
-
 
 //FUNCIONES DE TRANSICION
 static int boton_presionado (fsm_boton_encendido_t* this);
@@ -26,6 +24,7 @@ static int desbloqueo_off (fsm_boton_encendido_t* this);
 //FUNCIONES GUARDA
 static void inicio_activado (fsm_boton_encendido_t* this);
 static void inicio_actualizacion (fsm_boton_encendido_t* this);
+static void inicio_actualizacion_off (fsm_boton_encendido_t* this);
 static void inicio_desactivado (fsm_boton_encendido_t* this);
 
 
@@ -34,7 +33,7 @@ static fsm_trans_t inicio[] = {
   { OFF, (fsm_input_func_t)boton_presionado, BOTON_PULSADO, (fsm_output_func_t)inicio_activado},
   { BOTON_PULSADO, (fsm_input_func_t)desbloqueo_on, ON, (fsm_output_func_t)inicio_actualizacion},
   { ON, (fsm_input_func_t)boton_presionado, BOTON_PULSADO,  (fsm_output_func_t)inicio_desactivado },
-  { BOTON_PULSADO, (fsm_input_func_t)desbloqueo_off, OFF, (fsm_output_func_t)inicio_actualizacion },
+  { BOTON_PULSADO, (fsm_input_func_t)desbloqueo_off, OFF, (fsm_output_func_t)inicio_actualizacion_off },
   {-1, NULL, -1, NULL },
   };
 
@@ -105,6 +104,14 @@ static void inicio_actualizacion (fsm_boton_encendido_t* this)
 {
 	  this -> stop_timer(this -> timer_boton); //Temporizador boton stop
 	  *(this->flag_timer_boton) = 0; //Reinicio del flag del temporizador
+}
+
+static void inicio_actualizacion_off (fsm_boton_encendido_t* this)
+{
+	  this -> stop_timer(this -> timer_boton); //Temporizador boton stop
+	  *(this->flag_timer_boton) = 0; //Reinicio del flag del temporizador
+	  HAL_SuspendTick();
+	  HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 }
 
 static void inicio_desactivado (fsm_boton_encendido_t* this)
