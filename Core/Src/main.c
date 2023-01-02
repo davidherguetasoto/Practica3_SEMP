@@ -357,9 +357,9 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 2;
+  htim4.Init.Prescaler = 1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 199;
+  htim4.Init.Period = 49;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -454,7 +454,7 @@ static void MX_TIM7_Init(void)
   htim7.Instance = TIM7;
   htim7.Init.Prescaler = 7999;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 41999;
+  htim7.Init.Period = 4;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -652,13 +652,17 @@ void StartDefaultTask(void *argument)
   {
     osDelay(1);
     if((((task_muestreo.f)->f).current_state==0)&&(((task_led.f)->f).current_state==0)&&(((task_procesamiento.f)->f).current_state==0)&&(((task_boton.f)->f).current_state==0))
-    //if(isON())
     {
+    	/*TIM_HandleTypeDef *htim1=(TIM_HandleTypeDef*)0x200005fc;
+    	HAL_TIM_Base_Stop(htim1);
+    	HAL_SPI_DeInit(&hspi1);
+    	HAL_I2C_DeInit(&hi2c1);*/
     	HAL_SuspendTick();
-    	//HAL_TIM_Base_Stop(&htim1);
     	HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+    	/*HAL_SPI_Init(&hspi1);
+    	HAL_I2C_Init(&hi2c1);
+    	HAL_TIM_Base_Start(htim1);*/
     	HAL_ResumeTick();
-    	//HAL_TIM_Base_Start(&htim1);
     }
   }
   /* USER CODE END 5 */
