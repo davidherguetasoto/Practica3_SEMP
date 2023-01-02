@@ -54,7 +54,7 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityBelowNormal2,
 };
 /* USER CODE BEGIN PV */
 uint8_t activado, flag_timer_led, flag_timer_boton, flag_timer_muestreo;
@@ -104,7 +104,7 @@ task_fsm_led_encendido_t task_led ={
 		.task_attributes ={
 				.name = "task led",
 				.stack_size = 128*4,
-				.priority = (osPriority_t)osPriorityNormal1,
+				.priority = (osPriority_t)osPriorityBelowNormal1,
 		},
 		.timer_led = &htim6,
 		.delay = 1,
@@ -634,7 +634,22 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void osSuspend(void)
+{
+	vPortEnterCritical();
+	vTaskSuspendAll();
+	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
+	SCB->ICSR|=SCB_ICSR_PENDSVCLR_Msk|SCB_ICSR_PENDSTCLR_Msk;
+	vPortExitCritical();
+}
+void osResume(void)
+{
+	vPortEnterCritical();
+	SysTick->VAL=0;
+	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk;
+	xTaskResumeAll();
+	vPortExitCritical();
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -653,11 +668,13 @@ void StartDefaultTask(void *argument)
     osDelay(1);
     if((((task_muestreo.f)->f).current_state==0)&&(((task_led.f)->f).current_state==0)&&(((task_procesamiento.f)->f).current_state==0)&&(((task_boton.f)->f).current_state==0))
     {
-    	TIM_HandleTypeDef *htim1=(TIM_HandleTypeDef*)0x200005fc;
-    	HAL_TIM_Base_Stop(htim1);
+    	//TIM_HandleTypeDef *htim1=(TIM_HandleTypeDef*)0x200005fc;
+    	//HAL_TIM_Base_Stop(htim1);
+    	osSuspend();
     	HAL_SuspendTick();
     	HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-    	HAL_TIM_Base_Start(htim1);
+    	//HAL_TIM_Base_Start(htim1);
+    	osResume();
     	HAL_ResumeTick();
     }
   }
