@@ -16,6 +16,7 @@
 #define HIGH 60
 #define NORMAL 30
 
+
 typedef struct{
 	GPIO_TypeDef* GPIOx;
 	uint16_t GPIO_Pin;

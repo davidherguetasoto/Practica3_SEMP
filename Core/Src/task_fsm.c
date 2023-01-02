@@ -12,6 +12,7 @@
 #define SIZE_FIFO 80
 uint8_t fifo_full=0, fifo_empty=1;
 QueueHandle_t FIFO=NULL;
+uint32_t ciclos_muestreo=0,ciclos_procesamiento=0,ciclos_led=0,ciclos_boton=0;
 
 void pushFIFO(int16_t* buffer)
 {
@@ -59,7 +60,10 @@ void task_fsm_boton_encendido(void *argument)
 	while(1)
 	{
 		osDelay(p->delay);
+		KIN1_ResetCycleCounter();
+		KIN1_EnableCycleCounter();
 		fsm_boton_encendido_fire(p->f);
+		ciclos_boton = KIN1_GetCycleCounter();
 	}
 }
 
@@ -69,7 +73,10 @@ void task_fsm_muestreo(void *argument)
 	while(1)
 	{
 		osDelay(p->delay);
+		KIN1_ResetCycleCounter();
+		KIN1_EnableCycleCounter();
 		fsm_muestreo_fire(p->f);
+		ciclos_muestreo = KIN1_GetCycleCounter();
 	}
 }
 
@@ -79,7 +86,10 @@ void task_fsm_procesamiento(void *argument)
 	while(1)
 	{
 		osDelay(p->delay);
+		KIN1_ResetCycleCounter();
+		KIN1_EnableCycleCounter();
 		fsm_procesamiento_fire(p->f);
+		ciclos_procesamiento = KIN1_GetCycleCounter();
 	}
 }
 
@@ -89,7 +99,10 @@ void task_fsm_led_encendido(void *argument)
 	while(1)
 	{
 		osDelay(p->delay);
+		KIN1_ResetCycleCounter();
+		KIN1_EnableCycleCounter();
 		fsm_led_encendido_fire(p->f);
+		ciclos_led = KIN1_GetCycleCounter();
 	}
 }
 

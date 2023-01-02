@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -58,6 +58,7 @@ const osThreadAttr_t defaultTask_attributes = {
 };
 /* USER CODE BEGIN PV */
 uint8_t activado, flag_timer_led, flag_timer_boton, flag_timer_muestreo;
+uint32_t ciclos_default=0;
 
 task_fsm_boton_encendido_t task_boton ={
 		.task_attributes ={
@@ -130,10 +131,9 @@ void StartDefaultTask(void *argument);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
-
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+KIN1_InitCycleCounter();
 /* USER CODE END 0 */
 
 /**
@@ -666,6 +666,8 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
     osDelay(1);
+    KIN1_ResetCycleCounter();
+    KIN1_EnableCycleCounter();
     //Detención del micro si el sistema entero está en STOP
     if((((task_muestreo.f)->f).current_state==0)&&(((task_led.f)->f).current_state==0)&&(((task_procesamiento.f)->f).current_state==0)&&(((task_boton.f)->f).current_state==0))
     {
@@ -675,6 +677,7 @@ void StartDefaultTask(void *argument)
     	osResume();
     	HAL_ResumeTick();
     }
+    ciclos_default = KIN1_GetCycleCounter();
   }
   /* USER CODE END 5 */
 }
