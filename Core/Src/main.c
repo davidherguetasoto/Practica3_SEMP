@@ -638,15 +638,15 @@ void osSuspend(void)
 {
 	vPortEnterCritical();
 	vTaskSuspendAll();
-	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
-	SCB->ICSR|=SCB_ICSR_PENDSVCLR_Msk|SCB_ICSR_PENDSTCLR_Msk;
+	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk; //Disable systick
+	SCB->ICSR|=SCB_ICSR_PENDSVCLR_Msk|SCB_ICSR_PENDSTCLR_Msk; //Clear any pending
 	vPortExitCritical();
 }
 void osResume(void)
 {
 	vPortEnterCritical();
-	SysTick->VAL=0;
-	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk;
+	SysTick->VAL=0; //Reload systick
+	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk; //EnableSysTick
 	xTaskResumeAll();
 	vPortExitCritical();
 }
@@ -666,14 +666,12 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
     osDelay(1);
+    //Detención del micro si el sistema entero está en STOP
     if((((task_muestreo.f)->f).current_state==0)&&(((task_led.f)->f).current_state==0)&&(((task_procesamiento.f)->f).current_state==0)&&(((task_boton.f)->f).current_state==0))
     {
-    	//TIM_HandleTypeDef *htim1=(TIM_HandleTypeDef*)0x200005fc;
-    	//HAL_TIM_Base_Stop(htim1);
     	osSuspend();
     	HAL_SuspendTick();
     	HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-    	//HAL_TIM_Base_Start(htim1);
     	osResume();
     	HAL_ResumeTick();
     }
