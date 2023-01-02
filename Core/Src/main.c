@@ -54,7 +54,7 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal2,
+  .priority = (osPriority_t) osPriorityBelowNormal5,
 };
 /* USER CODE BEGIN PV */
 uint8_t activado, flag_timer_led, flag_timer_boton, flag_timer_muestreo;
@@ -91,7 +91,7 @@ task_fsm_procesamiento_t task_procesamiento ={
 		.task_attributes ={
 				.name = "task procesamiento",
 				.stack_size = 128*4,
-				.priority = (osPriority_t)osPriorityNormal2,
+				.priority = (osPriority_t)osPriorityNormal1,
 		},
 		.timer_pwm_salida = &htim4,
 		.canal_timer_pwm = TIM_CHANNEL_2,
