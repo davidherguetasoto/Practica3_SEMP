@@ -658,6 +658,7 @@ void StartDefaultTask(void *argument)
     	HAL_SuspendTick();
     	HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
     	HAL_TIM_Base_Start(htim1);
+    	HAL_ResumeTick();
     }
   }
   /* USER CODE END 5 */
