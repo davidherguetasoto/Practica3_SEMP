@@ -54,7 +54,7 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityBelowNormal5,
 };
 /* USER CODE BEGIN PV */
 uint8_t activado, flag_timer_led, flag_timer_boton, flag_timer_muestreo;
@@ -91,7 +91,7 @@ task_fsm_procesamiento_t task_procesamiento ={
 		.task_attributes ={
 				.name = "task procesamiento",
 				.stack_size = 128*4,
-				.priority = (osPriority_t)osPriorityNormal2,
+				.priority = (osPriority_t)osPriorityNormal1,
 		},
 		.timer_pwm_salida = &htim4,
 		.canal_timer_pwm = TIM_CHANNEL_2,
@@ -104,7 +104,7 @@ task_fsm_led_encendido_t task_led ={
 		.task_attributes ={
 				.name = "task led",
 				.stack_size = 128*4,
-				.priority = (osPriority_t)osPriorityNormal1,
+				.priority = (osPriority_t)osPriorityBelowNormal1,
 		},
 		.timer_led = &htim6,
 		.delay = 1,
@@ -244,12 +244,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 84;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -259,12 +254,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
   {
     Error_Handler();
   }
@@ -362,9 +357,9 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 20;
+  htim4.Init.Prescaler = 1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 99;
+  htim4.Init.Period = 49;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -419,9 +414,9 @@ static void MX_TIM6_Init(void)
 
   /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 999;
+  htim6.Init.Prescaler = 7999;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 41999;
+  htim6.Init.Period = 999;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
@@ -457,9 +452,9 @@ static void MX_TIM7_Init(void)
 
   /* USER CODE END TIM7_Init 1 */
   htim7.Instance = TIM7;
-  htim7.Init.Prescaler = 4;
+  htim7.Init.Prescaler = 7999;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 41999;
+  htim7.Init.Period = 4;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -495,7 +490,7 @@ static void MX_TIM9_Init(void)
 
   /* USER CODE END TIM9_Init 1 */
   htim9.Instance = TIM9;
-  htim9.Init.Prescaler = 41999;
+  htim9.Init.Prescaler = 7999;
   htim9.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim9.Init.Period = 499;
   htim9.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -565,7 +560,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : PA0 */
   GPIO_InitStruct.Pin = GPIO_PIN_0;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -632,10 +627,29 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(MEMS_INT2_GPIO_Port, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
-
+void osSuspend(void)
+{
+	vPortEnterCritical();
+	vTaskSuspendAll();
+	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk; //Disable systick
+	SCB->ICSR|=SCB_ICSR_PENDSVCLR_Msk|SCB_ICSR_PENDSTCLR_Msk; //Clear any pending
+	vPortExitCritical();
+}
+void osResume(void)
+{
+	vPortEnterCritical();
+	SysTick->VAL=0; //Reload systick
+	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk; //EnableSysTick
+	xTaskResumeAll();
+	vPortExitCritical();
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -652,6 +666,15 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
     osDelay(1);
+    //Detención del micro si el sistema entero está en STOP
+    if((((task_muestreo.f)->f).current_state==0)&&(((task_led.f)->f).current_state==0)&&(((task_procesamiento.f)->f).current_state==0)&&(((task_boton.f)->f).current_state==0))
+    {
+    	osSuspend();
+    	HAL_SuspendTick();
+    	HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+    	osResume();
+    	HAL_ResumeTick();
+    }
   }
   /* USER CODE END 5 */
 }
