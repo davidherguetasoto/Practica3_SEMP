@@ -68,18 +68,21 @@ void initSensor()
 void pwmSalidaNormal(void* salida)
 {
 	salida_t *s = (salida_t*)salida;
+	HAL_TIM_PWM_Start(s->timer_pwm_salida, s->channel);
 	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, NORMAL);
 }
 
 void pwmSalidaHigh(void* salida)
 {
 	salida_t *s = (salida_t*)salida;
+	HAL_TIM_PWM_Start(s->timer_pwm_salida, s->channel);
 	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, HIGH);
 }
 
 void pwmSalidaExtreme(void* salida)
 {
 	salida_t *s = (salida_t*)salida;
+	HAL_TIM_PWM_Start(s->timer_pwm_salida, s->channel);
 	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, EXTREME);
 }
 
@@ -87,6 +90,7 @@ void pwmSalidaOff(void* salida)
 {
 	salida_t *s = (salida_t*)salida;
 	__HAL_TIM_SET_COMPARE(s->timer_pwm_salida, s->channel, 0);
+	HAL_TIM_PWM_Stop(s->timer_pwm_salida, s->channel);
 }
 
 void togglePin(void* pin)

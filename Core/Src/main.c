@@ -653,16 +653,11 @@ void StartDefaultTask(void *argument)
     osDelay(1);
     if((((task_muestreo.f)->f).current_state==0)&&(((task_led.f)->f).current_state==0)&&(((task_procesamiento.f)->f).current_state==0)&&(((task_boton.f)->f).current_state==0))
     {
-    	/*TIM_HandleTypeDef *htim1=(TIM_HandleTypeDef*)0x200005fc;
+    	TIM_HandleTypeDef *htim1=(TIM_HandleTypeDef*)0x200005fc;
     	HAL_TIM_Base_Stop(htim1);
-    	HAL_SPI_DeInit(&hspi1);
-    	HAL_I2C_DeInit(&hi2c1);*/
     	HAL_SuspendTick();
     	HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-    	/*HAL_SPI_Init(&hspi1);
-    	HAL_I2C_Init(&hi2c1);
-    	HAL_TIM_Base_Start(htim1);*/
-    	HAL_ResumeTick();
+    	HAL_TIM_Base_Start(htim1);
     }
   }
   /* USER CODE END 5 */
