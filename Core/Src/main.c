@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -54,7 +54,7 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal5,
+  .priority = (osPriority_t) osPriorityNormal5,
 };
 /* USER CODE BEGIN PV */
 uint8_t activado, flag_timer_led, flag_timer_boton, flag_timer_muestreo;
@@ -130,7 +130,14 @@ void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
+void InitCycleCounter() //Funcion para iniciar el contador de ciclos
+{
+	uint32_t *p=(uint32_t*)0xE000EDFC, *m=(uint32_t*)(1UL<<24);
+	*p=*p|*m;
+}
+
 /* USER CODE END PFP */
+
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 KIN1_InitCycleCounter();
@@ -678,6 +685,7 @@ void StartDefaultTask(void *argument)
     	HAL_ResumeTick();
     }
     ciclos_default = KIN1_GetCycleCounter();
+    KIN1_DisableCycleCounter();
   }
   /* USER CODE END 5 */
 }

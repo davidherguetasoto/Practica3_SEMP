@@ -27,8 +27,8 @@ static void led_desactivado (fsm_led_encendido_t* this);
 //EVOLUCIÓN FSM
 static fsm_trans_t led[] = {
   { LED_OFF, (fsm_input_func_t)activado_on, LED_ON, (fsm_output_func_t)led_activado},
-  { LED_ON, (fsm_input_func_t)led_actualizacion, LED_ON, (fsm_output_func_t)led_toggle},
   { LED_ON, (fsm_input_func_t)activado_off, LED_OFF, (fsm_output_func_t)led_desactivado},
+  { LED_ON, (fsm_input_func_t)led_actualizacion, LED_ON, (fsm_output_func_t)led_toggle},
   {-1, NULL , -1, NULL },
   };
 

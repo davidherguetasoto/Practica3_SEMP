@@ -64,6 +64,7 @@ void task_fsm_boton_encendido(void *argument)
 		KIN1_EnableCycleCounter();
 		fsm_boton_encendido_fire(p->f);
 		ciclos_boton = KIN1_GetCycleCounter();
+		KIN1_DisableCycleCounter();
 	}
 }
 
@@ -77,6 +78,7 @@ void task_fsm_muestreo(void *argument)
 		KIN1_EnableCycleCounter();
 		fsm_muestreo_fire(p->f);
 		ciclos_muestreo = KIN1_GetCycleCounter();
+		KIN1_DisableCycleCounter();
 	}
 }
 
@@ -90,6 +92,7 @@ void task_fsm_procesamiento(void *argument)
 		KIN1_EnableCycleCounter();
 		fsm_procesamiento_fire(p->f);
 		ciclos_procesamiento = KIN1_GetCycleCounter();
+		KIN1_DisableCycleCounter();
 	}
 }
 
@@ -103,6 +106,7 @@ void task_fsm_led_encendido(void *argument)
 		KIN1_EnableCycleCounter();
 		fsm_led_encendido_fire(p->f);
 		ciclos_led = KIN1_GetCycleCounter();
+		KIN1_DisableCycleCounter();
 	}
 }
 
