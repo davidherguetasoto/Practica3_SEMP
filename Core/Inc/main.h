@@ -48,8 +48,8 @@ extern "C" {
  #define KIN1_TRCENA_BIT              (1UL<<24)
    /*!< Trace enable bit in DEMCR register */
 
-/*#define KIN1_InitCycleCounter() \
-  KIN1_DEMCR |= KIN1_TRCENA_BIT*/
+#define KIN1_InitCycleCounter() \
+  KIN1_DEMCR |= KIN1_TRCENA_BIT
   /*!< TRCENA: Enable trace and debug block DEMCR (Debug Exception and Monitor Control Register */
 
 #define KIN1_ResetCycleCounter() \

@@ -130,17 +130,11 @@ void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
-void InitCycleCounter() //Funcion para iniciar el contador de ciclos
-{
-	uint32_t *p=(uint32_t*)0xE000EDFC, *m=(uint32_t*)(1UL<<24);
-	*p=*p|*m;
-}
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-KIN1_InitCycleCounter();
+
 /* USER CODE END 0 */
 
 /**
@@ -159,6 +153,8 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+
+  KIN1_InitCycleCounter();
 
   /* USER CODE END Init */
 
