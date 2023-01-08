@@ -18,12 +18,12 @@ enum start_state {
 };
 
 
-//FUNCIONES DE TRANSICION
+//FUNCIONES DE GUARDA
 static int boton_presionado (fsm_boton_encendido_t* this);
 static int desbloqueo_on (fsm_boton_encendido_t* this);
 static int desbloqueo_off (fsm_boton_encendido_t* this);
 
-//FUNCIONES GUARDA
+//FUNCIONES DE SALIDA
 static void inicio_activado (fsm_boton_encendido_t* this);
 static void inicio_actualizacion (fsm_boton_encendido_t* this);
 static void inicio_desactivado (fsm_boton_encendido_t* this);
@@ -67,7 +67,7 @@ void _fsm_fire_boton_encendido (fsm_boton_encendido_t* this)
 	fsm_fire((fsm_t*)this);
 }
 
-//FUNCIONES DE TRANSICION
+//FUNCIONES DE GUARDA
 static int boton_presionado (fsm_boton_encendido_t* this)
 {
 	if (this->boton_pulsado(this->boton))
@@ -92,7 +92,7 @@ static int desbloqueo_off (fsm_boton_encendido_t* this)
 		return 0;
 }
 
-//FUNCIONES GUARDA
+//FUNCIONES DE SALIDA
 static void inicio_activado (fsm_boton_encendido_t* this)
 {
 	*(this -> activado) = 1;

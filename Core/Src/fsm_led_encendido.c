@@ -14,12 +14,12 @@ enum led_state {
 	LED_ON
 };
 
-//FUNCIONES DE TRANSICION
+//FUNCIONES DE GUARDA
 static int activado_on (fsm_led_encendido_t* this);
 static int led_actualizacion (fsm_led_encendido_t* this);
 static int activado_off (fsm_led_encendido_t* this);
 
-//FUNCIONES GUARDA
+//FUNCIONES DE SALIDA
 static void led_activado (fsm_led_encendido_t* this);
 static void led_toggle (fsm_led_encendido_t* this);
 static void led_desactivado (fsm_led_encendido_t* this);
@@ -60,7 +60,7 @@ void _fsm_fire_led_encendido (fsm_led_encendido_t* this)
 	fsm_fire((fsm_t*)this);
 }
 
-//FUNCIONES DE TRANSICION
+//FUNCIONES DE GUARDA
 static int activado_on (fsm_led_encendido_t* this)
 {
 	return *this->activado;
@@ -76,7 +76,7 @@ static int activado_off (fsm_led_encendido_t* this)
 	return !(*this->activado);
 }
 
-//FUNCIONES DE GUARDA
+//FUNCIONES DE SALIDA
 static void led_activado (fsm_led_encendido_t* this)
 {
 	*(this->flag_timer_led)=0;

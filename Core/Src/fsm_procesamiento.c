@@ -27,7 +27,7 @@ enum procesamiento_state{
 	MAX_MIN
 };
 
-//FUNCIONES DE TRANSICIÓN
+//FUNCIONES DE GUARDA
 int llegamuestra_p(fsm_procesamiento_t* this);
 int fsmDesactivada(fsm_procesamiento_t* this);
 int fsmActivada(fsm_procesamiento_t* this);
@@ -41,7 +41,7 @@ int aMax(fsm_procesamiento_t* this);
 int aMin(fsm_procesamiento_t* this);
 int aSiguiente(fsm_procesamiento_t* this);
 
-//FUNCIONES GUARDA
+//FUNCIONES DE SALIDA
 void preparacionProcesamiento(fsm_procesamiento_t* this);
 void preparacionCalculo(fsm_procesamiento_t* this);
 void calculoModulo(fsm_procesamiento_t* this);
@@ -105,7 +105,7 @@ void _fsm_procesamiento_fire(fsm_procesamiento_t* this)
 	fsm_fire((fsm_t*)this);
 }
 
-//FUNCIONES DE TRANSICIÓN
+//FUNCIONES DE GUARDA
 int llegamuestra_p(fsm_procesamiento_t* this)
 {
 	if(*(this->activado)&& !(*(this->FIFO_empty)))
@@ -194,7 +194,7 @@ int aSiguiente(fsm_procesamiento_t* this)
 		return 0;
 }
 
-//FUNCIONES GUARDA
+//FUNCIONES DE SALIDA
 void preparacionProcesamiento(fsm_procesamiento_t* this)
 {
 	buffer_modulo = (float*)malloc(N_MUESTRAS*sizeof(float));

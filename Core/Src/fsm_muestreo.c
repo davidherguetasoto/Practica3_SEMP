@@ -17,13 +17,13 @@ enum muestreo_state {
 	MUESTREO
 };
 
-//FUENCIONES DE TRANSICION
+//FUENCIONES DE GUARDA
 static int fsmActivada(fsm_muestreo_t* this);
 static int fsmDesactivada(fsm_muestreo_t* this);
 static int llegaNuevaLectura(fsm_muestreo_t* this);
 static int finLectura(fsm_muestreo_t* this);
 
-//FUNCIONES DE GUARDA
+//FUNCIONES DE SALIDA
 static void activarMuestreo(fsm_muestreo_t* this);
 static void desactivarMuestreo(fsm_muestreo_t* this);
 static void hacerLectura(fsm_muestreo_t* this);
@@ -70,7 +70,7 @@ void _fsm_muestreo_fire(fsm_muestreo_t* this)
 	fsm_fire((fsm_t*)this);
 }
 
-//FUNCIONES DE TRANSICION
+//FUNCIONES DE GUARDA
 static int fsmActivada(fsm_muestreo_t* this)
 {
 	if(*(this->activado))
@@ -104,7 +104,7 @@ static int finLectura(fsm_muestreo_t* this)
 }
 
 
-//FUNCIONES GUARDA
+//FUNCIONES DE SALIDA
 static void activarMuestreo(fsm_muestreo_t* this)
 {
 	muestra=0;
